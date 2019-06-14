@@ -1,0 +1,81 @@
+server:
+  port: 9991
+  tomcat:
+    uri-encoding: UTF-8
+mybatis:
+  mapper-locations: mapper/*.xml
+  type-aliases-package: cn.eblcu.questionbank.mapper
+  type-handlers-package: org.apache.ibatis.type.LocalDateTypeHandler
+  configuration:
+  # 启动懒加载
+    lazy-loading-enabled: true
+  #false 为按需加载，可通过fetchType="eager"设置为立即加载
+    aggressive-lazy-loading: false
+    lazy-load-trigger-methods:
+
+redis:
+  hostName: 127.0.0.1
+  port: 6379
+  password: 1234567
+  #超时时间
+  timeout: 10000
+  #最大空闲数
+  maxIdle: 300
+  #连接池最大连接数
+  maxTotal: 1000
+  #最大建立连接等待时间。如果超过此时间将接到异常。
+  maxWaitMillis: 1000
+  #连接的最小空闲时间 默认1800000毫秒(30分钟)
+  minEvictableIdleTimeMillis: 300000
+  #每次释放连接的最大数目,默认3
+  numTestsPerEvictionRun: 10
+  #逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
+  timeBetweenEvictionRunsMillis: 30000
+  #是否在从池中取出连接前进行检验,如果检验失败,则从池中去除连接并尝试取出另一个
+  testOnBorrow: true
+  #在空闲时检查有效性, 默认false
+  testWhileIdle: true
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/question_bank?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: root
+  data:
+    mongodb:
+      uri: mongodb://myTester:123456@127.0.0.1:27017/mytest
+    #连接池配置，其他的采用默认配置
+    option:
+      min-connection-per-host: 0  #每个host允许的最小连接数
+      max-connection-per-host: 10 #每个host允许的最大连接数
+  servlet:
+    multipart:
+      #是否支持批量上传
+      enabled: true
+      #上传文件最大为 50M
+      max-file-size: 50MB
+      #上传总数据大小 200M
+      max-request-size: 200MB
+  jackson:
+      serialization:
+        FAIL_ON_EMPTY_BEANS: false
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
+#控制swagger启用或是禁用
+swagger:
+  enable: true
+#用户头像地址
+file:
+  imagePath: E:/userPhotos/
+#本机域名配置
+localUrl: http://192.168.0.178:9991
+
+#生成秘钥对文件目录
+register:
+  filePath: D:/key/
+
+excel:
+  importFields: 课程分类编码,课程名称,课程编码,章,章助记码,节,节助记码,知识点,知识点助记码

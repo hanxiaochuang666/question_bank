@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.eblcu.questionbank.persistence.dao.KnowledgePointsDetailMapper">
+  <resultMap id="BaseResultMap" type="cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail">
+    <id column="knowledge_points_detail_id" jdbcType="INTEGER" property="knowledgePointsDetailId" />
+    <result column="knowledge_points_id" jdbcType="INTEGER" property="knowledgePointsId" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    knowledge_points_detail_id, knowledge_points_id, parent_id, name
+  </sql>
+  <sql id="BaseWhere">
+    	<if test="!@org.springframework.util.StringUtils@isEmpty(entityKeyValues)">
+			and knowledge_points_detail_id in
+			<foreach item="item" index="index" collection="entityKeyValues" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="!@org.springframework.util.StringUtils@isEmpty(notEntityKeyValues)">
+			and knowledge_points_detail_id not in
+			<foreach item="item" index="index" collection="notEntityKeyValues" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="!@org.springframework.util.StringUtils@isEmpty(knowledgePointsDetailId)">
+			and knowledge_points_detail_id=#{knowledgePointsDetailId,jdbcType=INTEGER}
+		</if>
+		<if test="!@org.springframework.util.StringUtils@isEmpty(knowledgePointsId)">
+			and knowledge_points_id=#{knowledgePointsId,jdbcType=INTEGER}
+		</if>
+		<if test="!@org.springframework.util.StringUtils@isEmpty(parentId)">
+			and parent_id=#{parentId,jdbcType=INTEGER}
+		</if>
+		<if test="!@org.springframework.util.StringUtils@isEmpty(name)">
+			and name=#{name,jdbcType=VARCHAR}
+		</if>
+
+  </sql>
+  <select id="selectCount" parameterType="java.util.Map" resultType="java.lang.Long">
+    	select count(1) from knowledge_points_detail
+		<where>
+			<include refid="BaseWhere" />
+		</where>
+  </select>
+  <select id="selectList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    	select
+		<include refid="Base_Column_List"/> 
+		from knowledge_points_detail
+		<where>
+			<include refid="BaseWhere"/>
+		</where>
+
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from knowledge_points_detail
+    where knowledge_points_detail_id = #{knowledgePointsDetailId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from knowledge_points_detail
+    where knowledge_points_detail_id = #{knowledgePointsDetailId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail">
+    insert into knowledge_points_detail
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="knowledgePointsDetailId != null">
+        knowledge_points_detail_id,
+      </if>
+      <if test="knowledgePointsId != null">
+        knowledge_points_id,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="knowledgePointsDetailId != null">
+        #{knowledgePointsDetailId,jdbcType=INTEGER},
+      </if>
+      <if test="knowledgePointsId != null">
+        #{knowledgePointsId,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail">
+    update knowledge_points_detail
+    <set>
+      <if test="knowledgePointsId != null">
+        knowledge_points_id = #{knowledgePointsId,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where knowledge_points_detail_id = #{knowledgePointsDetailId,jdbcType=INTEGER}
+  </update>
+</mapper>
