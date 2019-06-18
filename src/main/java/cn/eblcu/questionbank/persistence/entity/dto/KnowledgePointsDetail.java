@@ -2,11 +2,8 @@ package cn.eblcu.questionbank.persistence.entity.dto;
 
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class KnowledgePointsDetail implements Serializable {
-    private static final long serialVersionUID = -7512360252572441033L;
+public class KnowledgePointsDetail {
     /**
 	 *知识点详情id
 	 */
@@ -27,6 +24,12 @@ public class KnowledgePointsDetail implements Serializable {
 	 */
     private String name;
 
+    /**
+	 *标题助记码
+	 */
+    private Integer titleNumber;
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -37,6 +40,7 @@ public class KnowledgePointsDetail implements Serializable {
         sb.append(", knowledgePointsId=").append(knowledgePointsId);
         sb.append(", parentId=").append(parentId);
         sb.append(", name=").append(name);
+        sb.append(", titleNumber=").append(titleNumber);
         sb.append("]");
         return sb.toString();
     }

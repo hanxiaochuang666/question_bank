@@ -48,6 +48,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.13</version>
@@ -151,8 +156,6 @@
             <artifactId>mongodb-plus-spring-boot-starter</artifactId>
             <version>1.0.0.RELEASE</version>
         </dependency>
-        <!-- word文档操作依赖 -->
-
         <!-- EasyPoi导入导出-->
         <dependency>
             <groupId>cn.afterturn</groupId>
@@ -163,11 +166,6 @@
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-web</artifactId>
             <version>${easypoi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>4.1.0</version>
         </dependency>
     </dependencies>
 

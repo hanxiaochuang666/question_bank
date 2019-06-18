@@ -3,9 +3,17 @@ package cn.eblcu.questionbank.domain.service.impl;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
-import cn.eblcu.questionbank.domain.service.KnowledgePointsService;
-import cn.eblcu.questionbank.persistence.dao.KnowledgePointsMapper;
+import cn.eblcu.questionbank.domain.service.IKnowledgePointsService;
+import cn.eblcu.questionbank.infrastructure.util.CommonUtils;
+import cn.eblcu.questionbank.infrastructure.util.DateUtils;
+import cn.eblcu.questionbank.persistence.dao.IBaseDao;
+import cn.eblcu.questionbank.persistence.dao.IKnowledgePointsDetailDao;
+import cn.eblcu.questionbank.persistence.dao.IKnowledgePointsDao;
+import cn.eblcu.questionbank.persistence.entity.dto.KnowledgePoints;
+import cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail;
+import cn.eblcu.questionbank.ui.model.KnowledgePointNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import cn.eblcu.questionbank.ui.exception.BusinessException;
 import cn.eblcu.questionbank.ui.model.BaseModle;
@@ -15,23 +23,33 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Slf4j
-public class KnowledgePointsServiceImpl implements KnowledgePointsService {
+public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnowledgePointsService {
+
+
 
     @Value("${excel.importFields}")
     private String importFields;
 
     @Autowired
-    private KnowledgePointsMapper pointsMapper;
-
+    private IKnowledgePointsDao pointsDao;
+    @Autowired
+    private IKnowledgePointsDetailDao pointsDetailDao;
 
     @Override
-    public BaseModle importKnowledgePoints(MultipartFile file) throws BusinessException {
+    IBaseDao getMapper() {
+        return pointsDao;
+    }
+
+    @Override
+    @Transactional
+    public BaseModle importKnowledgePoints(MultipartFile file, Map<String, Object> paraMap) throws BusinessException {
 
         ImportParams importParams = new ImportParams();
         importParams.setHeadRows(1);// 表头
@@ -46,24 +64,124 @@ public class KnowledgePointsServiceImpl implements KnowledgePointsService {
                     importParams);
             List<KnowledgePointsModel> successList = result.getList();
             List<KnowledgePointsModel> failList = result.getFailList();
-            if(!StringUtils.isEmpty(failList) && failList.size() > 0){
-                throw new BusinessException("9998","上传失败："+failList.size()+"条，请检查excel内容是否规范！");
+            if (!StringUtils.isEmpty(failList) && failList.size() > 0) {
+                throw new BusinessException("9998", "上传失败：" + failList.size() + "条，请检查excel内容是否规范！");
             }
-            insertPoints(successList);
+            insertPoints(successList, paraMap);
             // 使用工具
 //            List<KnowledgePointsModel> results = ExcelUtiles.importExcel(file,0,1,KnowledgePointsModel.class);
         } catch (Exception e) {
-            throw new BusinessException("9999","上传出错："+e.getMessage());
+            e.printStackTrace();
+            throw new BusinessException("9999", "上传出错：" + e.getMessage());
         }
         return BaseModle.getSuccessData();
     }
 
 
-    private void insertPoints(List<KnowledgePointsModel> list){
-        log.info("课程目录导入数据===================="+list.toString());
-        Map<String,Object> paraMap = new HashMap<>();
+    private void insertPoints(List<KnowledgePointsModel> list, Map<String, Object> map) {
+        log.info("课程目录导入数据====================" + list.toString());
+        // 先查这个课程是否已经有知识点了，有了就删除重新导入
+        List<KnowledgePoints> pointsList = pointsDao.selectList(map);
+        if (!CommonUtils.listIsEmptyOrNull(pointsList)) {
+            pointsDao.deleteByPrimaryKey(pointsList.get(0).getKnowledgePointsId());
+            List<KnowledgePointsDetail> details = pointsDetailDao.selectList(map);
+            if (!CommonUtils.listIsEmptyOrNull(details)) {
+                Map<String, Object> delMap = new HashMap<>();
+                delMap.put("knowledgePointsId", details.get(0).getKnowledgePointsId());
+                pointsDetailDao.deleteByParams(delMap);
+            }
+        }
+        // 插入知识点总表
+        KnowledgePoints points = new KnowledgePoints();
+        points.setCourseId(Integer.parseInt(String.valueOf(map.get("courseId"))));
+        points.setCategoryOne(Integer.parseInt(String.valueOf(map.get("categoryOne"))));
+        points.setCategoryTwo(Integer.parseInt(String.valueOf(map.get("categoryTwo"))));
+        points.setCourseName(String.valueOf(map.get("courseName")));
+        points.setOrgId(Integer.parseInt(String.valueOf(map.get("orgId"))));
+        points.setCreateTime(DateUtils.now());
+        points.setCreateUser(Integer.parseInt(String.valueOf(map.get("createUserId"))));
+        pointsDao.insertSelective(points);
         list.forEach(pointsModel -> {
-            // todo 插入数据库
+            String chapterName = pointsModel.getChapter();
+            String sectionName = pointsModel.getSection();
+            String className = pointsModel.getKnowledgePoints();
+            Integer parentId;
+            // 1、章
+            if (!StringUtils.isEmpty(chapterName)) {
+                parentId = insertPointsDetail(pointsModel.getChapter(), pointsModel.getChapterMnemonicCode(),
+                        points.getKnowledgePointsId(), 0);
+                // 2、节
+                Integer sectionParentId;
+                if (!StringUtils.isEmpty(sectionName)) {
+                    sectionParentId = insertPointsDetail(pointsModel.getSection(), pointsModel.getSectionMnemonicCode(),
+                            points.getKnowledgePointsId(), parentId);
+                    // 3、课时
+                    if (!StringUtils.isEmpty(className)) {
+                        insertPointsDetail(pointsModel.getKnowledgePoints(), pointsModel.getPointsMnemonicCode(),
+                                points.getKnowledgePointsId(), sectionParentId);
+                    }
+                }
+            }
         });
+    }
+
+    private int insertPointsDetail(String name, Integer titleNumber, Integer knowledgeId, Integer parentId) {
+        KnowledgePointsDetail detail = new KnowledgePointsDetail();
+        detail.setKnowledgePointsId(knowledgeId);
+        Map<String, Object> paraMap = new HashMap<>();
+        paraMap.put("name", name);
+        List<KnowledgePointsDetail> lists = pointsDetailDao.selectList(paraMap);
+        if (CommonUtils.listIsEmptyOrNull(lists)) {
+            detail.setName(name);
+            detail.setParentId(parentId);
+            detail.setTitleNumber(titleNumber);
+            pointsDetailDao.insertSelective(detail);
+            return detail.getKnowledgePointsDetailId();
+        }
+        return lists.get(0).getKnowledgePointsDetailId();
+    }
+
+    @Override
+    public BaseModle getKnowledgePoints(int courseId) throws BusinessException {
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("courseId", courseId);
+        List<KnowledgePoints> pointsList = pointsDao.selectList(map);
+        if (CommonUtils.listIsEmptyOrNull(pointsList)){
+            return BaseModle.getFailData("-1", "该课程下还没有建立知识点！");
+        }
+
+        List<KnowledgePointNode> nodes = new ArrayList<>();
+        Map<String,Object> paraMap = new HashMap<>();
+        paraMap.put("_sort_line", "title_number");
+        paraMap.put("parentId", "0");
+        paraMap.put("_order_", "ASC");
+        paraMap.put("knowledgePointsId", pointsList.get(0).getKnowledgePointsId());
+        nodes = getChildNodes(paraMap);
+        return BaseModle.getSuccessData(nodes);
+    }
+
+
+    private List<KnowledgePointNode> getChildNodes(Map<String,Object> paraMap){
+
+        List<KnowledgePointNode> nodes = new ArrayList<>();
+        List<KnowledgePointsDetail> lists = new ArrayList<>();
+        lists = pointsDetailDao.selectList(paraMap);
+        if (!CommonUtils.listIsEmptyOrNull(lists)){
+            lists.forEach(pointsDetail->{
+                KnowledgePointNode nodeTmp = new KnowledgePointNode();
+                nodeTmp.setId(pointsDetail.getKnowledgePointsDetailId());
+                nodeTmp.setKnowledgePointId(pointsDetail.getKnowledgePointsId());
+                nodeTmp.setName(pointsDetail.getName());
+                nodeTmp.setTitleNumber(pointsDetail.getTitleNumber());
+                paraMap.put("_sort_line", "title_number");
+                paraMap.put("parentId", pointsDetail.getKnowledgePointsDetailId());
+                paraMap.put("_order_", "ASC");
+                paraMap.put("knowledgePointsId", pointsDetail.getKnowledgePointsId());
+                nodeTmp.setNodes(getChildNodes(paraMap));
+                nodes.add(nodeTmp);
+            });
+        }
+        return nodes;
     }
 }

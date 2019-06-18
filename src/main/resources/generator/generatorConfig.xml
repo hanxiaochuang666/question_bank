@@ -5,8 +5,10 @@
 
 <generatorConfiguration>
     <!-- 数据库驱动:选择你的本地硬盘上面的数据库驱动包,8.0以上的包只会生成insert，所以需要低版本-->
+            <!--location="D:\mavenSpace\maven_repo\mysql\mysql-connector-java\5.1.35\mysql-connector-java-5.1.35.jar"/>-->
     <classPathEntry
-            location="D:\mavenSpace\maven_repo\mysql\mysql-connector-java\5.1.35\mysql-connector-java-5.1.35.jar"/>
+        location="D:\mavenSpace\maven_repo\mysql\mysql-connector-java\8.0.13\mysql-connector-java-8.0.13.jar"/>
+
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <!--自定义注释插件-->
         <plugin type="org.mybatis.customPlugin.model.NotesPlugin"/>
@@ -14,26 +16,31 @@
         <plugin type="org.mybatis.customPlugin.xml.IsRepeatPlugin"/>
         <!--添加自定义mapperSql插件-->
         <plugin type="org.mybatis.customPlugin.xml.MapperPlugin">
-            <!--&lt;!&ndash;排序规则依赖&ndash;&gt;-->
-            <!--<property name="orderSqlMap" value="com.jdd.common.orderSqlMap"/>-->
-            <!--&lt;!&ndash;分页规则依赖&ndash;&gt;-->
-            <!--<property name="pageSqlMap" value="com.jdd.common.pageSqlMap"/>-->
+            <!--排序规则依赖-->
+            <property name="orderSqlMap" value="cn.eblcu.questionbank.common.orderSqlMap"/>
+            <!--分页规则依赖-->
+            <property name="pageSqlMap" value="cn.eblcu.questionbank.common.pageSqlMap"/>
             <!--非空判断指定-->
             <property name="emptyClass" value="@org.springframework.util.StringUtils@isEmpty"/>
         </plugin>
         <!--model添加toString-->
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
         <!--自定义生成service-->
-        <!--<plugin type="org.mybatis.customPlugin.service.ServicePlugin" >-->
-        <!--&lt;!&ndash;包路径&ndash;&gt;-->
-        <!--<property name="targetPackage" value="cn.eblcu.sso.domain"/>-->
-        <!--&lt;!&ndash;项目路径&ndash;&gt;-->
-        <!--<property name="targetProject" value="src/main/java"/>-->
-        <!--&lt;!&ndash;继承&ndash;&gt;-->
-        <!--&lt;!&ndash;<property name="rootInterface" value="com.jdd.service.IBaseService"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;基础dao路径&ndash;&gt;-->
-        <!--<property name="targetDaoPackage" value="cn.eblcu.sso.domain"/>-->
-        <!--</plugin>-->
+        <!--<plugin type="org.mybatis.customPlugin.service.ServicePlugin" >
+            &lt;!&ndash;包路径&ndash;&gt;
+            <property name="targetPackage" value="cn.eblcu.questionbank.domain.service"/>
+            &lt;!&ndash;项目路径&ndash;&gt;
+            <property name="targetProject" value="src/main/java"/>
+            &lt;!&ndash;继承&ndash;&gt;
+            <property name="rootInterface" value="cn.eblcu.questionbank.domain.service.IBaseService"/>
+            &lt;!&ndash;基础dao路径&ndash;&gt;
+            <property name="targetDaoPackage" value="cn.eblcu.questionbank.persistence.dao"/>
+        </plugin>-->
+        <!---->
+        <plugin type="org.mybatis.customPlugin.dao.DaoPlugin" >
+            <!--继承-->
+            <property name="rootInterface" value="cn.eblcu.questionbank.persistence.dao.IBaseDao"/>
+        </plugin>
         <commentGenerator>
             <property name="suppressDate" value="true"/>
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
@@ -55,16 +62,16 @@
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!-- 生成映射文件的包名和位置-->
-        <!--<sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">-->
-            <!--<property name="enableSubPackages" value="true"/>-->
-        <!--</sqlMapGenerator>-->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
         <!-- 生成DAO的包名和位置-->
-        <!--<javaClientGenerator type="XMLMAPPER" targetPackage="cn.eblcu.questionbank.persistence.dao"-->
-                             <!--targetProject="src/main/java">-->
-            <!--<property name="enableSubPackages" value="true"/>-->
-        <!--</javaClientGenerator>-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="cn.eblcu.questionbank.persistence.dao"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
 
-        <table tableName="test_result_detail"
+        <table tableName="knowledge_points"
                enableSelectByExample="false"
                enableDeleteByExample="false"
                enableCountByExample="false"

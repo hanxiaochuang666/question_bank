@@ -6,8 +6,7 @@ public enum StatusCodeEnum {
     PARAM_ERROR("001","参数错误"),
     NO_AUTHORITY("002","无访问权限"),
     INVALID_DATA("003","非法数据"),
-    BUSINESS_ERROR("004","业务逻辑错误"),
-    NO_VALID_NEWS("005","暂无新闻"),
+    BUSINESS_ERROR("004","业务逻辑错误")
     ;
 
     private StatusCodeEnum(String code, String describe){
