@@ -6,21 +6,20 @@ import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
 import cn.eblcu.questionbank.domain.service.IKnowledgePointsService;
 import cn.eblcu.questionbank.infrastructure.util.CommonUtils;
 import cn.eblcu.questionbank.infrastructure.util.DateUtils;
-import cn.eblcu.questionbank.persistence.dao.IBaseDao;
-import cn.eblcu.questionbank.persistence.dao.IKnowledgePointsDetailDao;
 import cn.eblcu.questionbank.persistence.dao.IKnowledgePointsDao;
+import cn.eblcu.questionbank.persistence.dao.IKnowledgePointsDetailDao;
 import cn.eblcu.questionbank.persistence.entity.dto.KnowledgePoints;
 import cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail;
-import cn.eblcu.questionbank.ui.model.KnowledgePointNode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import cn.eblcu.questionbank.ui.exception.BusinessException;
 import cn.eblcu.questionbank.ui.model.BaseModle;
+import cn.eblcu.questionbank.ui.model.KnowledgePointNode;
 import cn.eblcu.questionbank.ui.model.KnowledgePointsModel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -30,8 +29,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnowledgePointsService {
-
+public class KnowledgePointsServiceImpl implements IKnowledgePointsService {
 
 
     @Value("${excel.importFields}")
@@ -41,11 +39,6 @@ public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnow
     private IKnowledgePointsDao pointsDao;
     @Autowired
     private IKnowledgePointsDetailDao pointsDetailDao;
-
-    @Override
-    IBaseDao getMapper() {
-        return pointsDao;
-    }
 
     @Override
     @Transactional
@@ -81,7 +74,9 @@ public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnow
     private void insertPoints(List<KnowledgePointsModel> list, Map<String, Object> map) {
         log.info("课程目录导入数据====================" + list.toString());
         // 先查这个课程是否已经有知识点了，有了就删除重新导入
-        List<KnowledgePoints> pointsList = pointsDao.selectList(map);
+        Map<String,Object> objectMap = new HashMap<>();
+        objectMap.put("courseId", map.get("courseId"));
+        List<KnowledgePoints> pointsList = pointsDao.selectList(objectMap);
         if (!CommonUtils.listIsEmptyOrNull(pointsList)) {
             pointsDao.deleteByPrimaryKey(pointsList.get(0).getKnowledgePointsId());
             List<KnowledgePointsDetail> details = pointsDetailDao.selectList(map);
@@ -130,6 +125,7 @@ public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnow
         detail.setKnowledgePointsId(knowledgeId);
         Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("name", name);
+        paraMap.put("knowledgePointsId", knowledgeId);
         List<KnowledgePointsDetail> lists = pointsDetailDao.selectList(paraMap);
         if (CommonUtils.listIsEmptyOrNull(lists)) {
             detail.setName(name);
@@ -144,15 +140,14 @@ public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnow
     @Override
     public BaseModle getKnowledgePoints(int courseId) throws BusinessException {
 
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("courseId", courseId);
         List<KnowledgePoints> pointsList = pointsDao.selectList(map);
-        if (CommonUtils.listIsEmptyOrNull(pointsList)){
+        if (CommonUtils.listIsEmptyOrNull(pointsList)) {
             return BaseModle.getFailData("-1", "该课程下还没有建立知识点！");
         }
-
         List<KnowledgePointNode> nodes = new ArrayList<>();
-        Map<String,Object> paraMap = new HashMap<>();
+        Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("_sort_line", "title_number");
         paraMap.put("parentId", "0");
         paraMap.put("_order_", "ASC");
@@ -162,13 +157,13 @@ public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnow
     }
 
 
-    private List<KnowledgePointNode> getChildNodes(Map<String,Object> paraMap){
+    private List<KnowledgePointNode> getChildNodes(Map<String, Object> paraMap) {
 
         List<KnowledgePointNode> nodes = new ArrayList<>();
         List<KnowledgePointsDetail> lists = new ArrayList<>();
         lists = pointsDetailDao.selectList(paraMap);
-        if (!CommonUtils.listIsEmptyOrNull(lists)){
-            lists.forEach(pointsDetail->{
+        if (!CommonUtils.listIsEmptyOrNull(lists)) {
+            lists.forEach(pointsDetail -> {
                 KnowledgePointNode nodeTmp = new KnowledgePointNode();
                 nodeTmp.setId(pointsDetail.getKnowledgePointsDetailId());
                 nodeTmp.setKnowledgePointId(pointsDetail.getKnowledgePointsId());
@@ -184,4 +179,89 @@ public class KnowledgePointsServiceImpl extends BaseServiceImpl implements IKnow
         }
         return nodes;
     }
+
+
+    @Override
+    @Transactional
+    public BaseModle addKnowledgePoints(int courseId, int parentId, String name) throws BusinessException {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("courseId", courseId);
+        List<KnowledgePoints> pointsList = pointsDao.selectList(map);
+        if (CommonUtils.listIsEmptyOrNull(pointsList)) {
+            throw new BusinessException("-1", "未查到该课程！");
+        }
+
+        map.put("_sort_line", "title_number");
+        map.put("parentId", parentId);
+        map.put("_order_", "ASC");
+        map.put("knowledgePointsId", pointsList.get(0).getKnowledgePointsId());
+        List<KnowledgePointsDetail> lists = new ArrayList<>();
+        lists = pointsDetailDao.selectList(map);
+            KnowledgePointsDetail detail = new KnowledgePointsDetail();
+            detail.setParentId(parentId);
+            detail.setName(name);
+            detail.setKnowledgePointsId(pointsList.get(0).getKnowledgePointsId());
+        if (!CommonUtils.listIsEmptyOrNull(lists)) {
+            detail.setTitleNumber(lists.get(lists.size() - 1).getTitleNumber() + 1);
+        } else {
+            detail.setTitleNumber(1);
+        }
+            pointsDetailDao.insertSelective(detail);
+        return BaseModle.getSuccessData();
+    }
+
+    @Override
+    public BaseModle editKnowledgePoints(int pointDetailId, String name) throws BusinessException {
+
+        KnowledgePointsDetail detail = new KnowledgePointsDetail();
+        detail.setName(name);
+        detail.setKnowledgePointsDetailId(pointDetailId);
+        pointsDetailDao.updateByPrimaryKeySelective(detail);
+        return BaseModle.getSuccessData();
+    }
+
+    @Override
+    @Transactional
+    public BaseModle deleteKnowledgePoints(int pointDetailId) throws BusinessException {
+
+        KnowledgePointsDetail detail = pointsDetailDao.selectByPrimaryKey(pointDetailId);
+        if (StringUtils.isEmpty(detail)) {
+            return BaseModle.getSuccessData();
+        }
+        List<KnowledgePointNode> nodes = new ArrayList<>();
+        Map<String, Object> paraMap = new HashMap<>();
+        paraMap.put("_sort_line", "title_number");
+        paraMap.put("parentId", detail.getParentId());
+        paraMap.put("_order_", "ASC");
+        paraMap.put("knowledgePointsId", detail.getKnowledgePointsId());
+
+        // 删除时，同级下其后面的助记码都要调整
+        List<KnowledgePointsDetail> lists = new ArrayList<>();
+        lists = pointsDetailDao.selectList(paraMap);
+        if (!CommonUtils.listIsEmptyOrNull(lists)) {
+            lists.stream().filter(s -> s.getTitleNumber() > detail.getTitleNumber() && s.getTitleNumber() > 1)
+                    .forEach(detailPoint -> {
+                        detailPoint.setTitleNumber(detailPoint.getTitleNumber() - 1);
+                        pointsDetailDao.updateByPrimaryKeySelective(detailPoint);
+                    });
+        }
+        pointsDetailDao.deleteByPrimaryKey(pointDetailId);
+        paraMap.put("parentId", pointDetailId);
+        nodes = getChildNodes(paraMap);
+        deleteNotes(nodes);
+        return BaseModle.getSuccessData();
+    }
+
+    private void deleteNotes(List<KnowledgePointNode> nodes) {
+
+        if (!CommonUtils.listIsEmptyOrNull(nodes)) {
+            nodes.forEach(node -> {
+                pointsDetailDao.deleteByPrimaryKey(node.getId());
+                deleteNotes(node.getNodes());
+            });
+        }
+    }
+
+
 }

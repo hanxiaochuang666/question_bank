@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.eblcu.questionbank.persistence.dao.TestPaperMapper">
+<mapper namespace="cn.eblcu.questionbank.persistence.dao.ITestPaperDao">
   <resultMap id="BaseResultMap" type="cn.eblcu.questionbank.persistence.entity.dto.TestPaper">
     <id column="test_paper_id" jdbcType="INTEGER" property="testPaperId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -116,8 +116,15 @@
 		<where>
 			<include refid="BaseWhere"/>
 		</where>
-
+		<include refid="cn.eblcu.questionbank.common.orderSqlMap" /> 
+		<include refid="cn.eblcu.questionbank.common.pageSqlMap" /> 
   </select>
+  <delete id="deleteByParams" parameterType="java.util.Map">
+    	delete from test_paper
+		<where>
+			<include refid="BaseWhere"/>
+		</where>
+  </delete>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -128,7 +135,24 @@
     delete from test_paper
     where test_paper_id = #{testPaperId,jdbcType=INTEGER}
   </delete>
-  <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestPaper">
+  <insert id="insert" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestPaper">
+    insert into test_paper (test_paper_id, name, category_one, 
+      category_two, course_id, course_name, 
+      use_type, time, start_time, 
+      end_time, is_score, total_score, 
+      form_type, export_path, export_time, 
+      org_id, create_user, create_time, 
+      update_user, update_time)
+    values (#{testPaperId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{categoryOne,jdbcType=INTEGER}, 
+      #{categoryTwo,jdbcType=INTEGER}, #{courseId,jdbcType=INTEGER}, #{courseName,jdbcType=VARCHAR}, 
+      #{useType,jdbcType=TINYINT}, #{time,jdbcType=INTEGER}, #{startTime,jdbcType=DATE}, 
+      #{endTime,jdbcType=DATE}, #{isScore,jdbcType=TINYINT}, #{totalScore,jdbcType=INTEGER}, 
+      #{formType,jdbcType=INTEGER}, #{exportPath,jdbcType=VARCHAR}, #{exportTime,jdbcType=DATE}, 
+      #{orgId,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, #{createTime,jdbcType=DATE}, 
+      #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestPaper"
+          useGeneratedKeys="true" keyProperty="testPaperId" keyColumn="test_paper_id">
     insert into test_paper
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="testPaperId != null">
@@ -316,6 +340,29 @@
         update_time = #{updateTime,jdbcType=DATE},
       </if>
     </set>
+    where test_paper_id = #{testPaperId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestPaper">
+    update test_paper
+    set name = #{name,jdbcType=VARCHAR},
+      category_one = #{categoryOne,jdbcType=INTEGER},
+      category_two = #{categoryTwo,jdbcType=INTEGER},
+      course_id = #{courseId,jdbcType=INTEGER},
+      course_name = #{courseName,jdbcType=VARCHAR},
+      use_type = #{useType,jdbcType=TINYINT},
+      time = #{time,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=DATE},
+      end_time = #{endTime,jdbcType=DATE},
+      is_score = #{isScore,jdbcType=TINYINT},
+      total_score = #{totalScore,jdbcType=INTEGER},
+      form_type = #{formType,jdbcType=INTEGER},
+      export_path = #{exportPath,jdbcType=VARCHAR},
+      export_time = #{exportTime,jdbcType=DATE},
+      org_id = #{orgId,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=DATE}
     where test_paper_id = #{testPaperId,jdbcType=INTEGER}
   </update>
 </mapper>

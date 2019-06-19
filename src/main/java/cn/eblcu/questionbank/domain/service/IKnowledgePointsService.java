@@ -12,4 +12,11 @@ public interface IKnowledgePointsService {
 
     BaseModle getKnowledgePoints(int courseId) throws BusinessException;
 
+    BaseModle addKnowledgePoints(int courseId, int parentId,String name) throws BusinessException;
+
+    BaseModle editKnowledgePoints(int pointDetailId,String name) throws BusinessException;
+
+    BaseModle deleteKnowledgePoints(int pointDetailId) throws BusinessException;
+
+
 }

@@ -5,17 +5,17 @@ import java.util.Map;
 
 public interface IBaseService {
 
-    <T> long selectCount(Map<String,Object> dic);
+    <T> long selectCount(Map<String,Object> map);
 
-    <T> List<T> selectList(Map<String,Object> dic);
+    <T> List<T> selectList(Map<String,Object> map);
 
-    int deleteByPrimaryKey(Integer dictionaryDataId);
+    int deleteByPrimaryKey(Integer id);
 
     <T>  int insertSelective(T record);
 
     <T> T selectByPrimaryKey(Integer id);
 
-    <T> int updateByPrimaryKeySelective(T record);
+    <T> int updateByPrimaryKeySelective(T obj);
 
     <T> int deleteByParams(Map<String,Object> map);
 }
