@@ -1,5 +1,6 @@
 package cn.eblcu.questionbank.ui.api;
 
+import cn.eblcu.questionbank.client.CheckToken;
 import cn.eblcu.questionbank.domain.service.IKnowledgePointsService;
 import cn.eblcu.questionbank.infrastructure.util.SupperTokenUtils;
 import cn.eblcu.questionbank.ui.exception.BusinessException;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+@CheckToken
 @RestController
 @RequestMapping("/knowledge")
 @Api(tags = "知识点管理API",description = "包含：\n" +

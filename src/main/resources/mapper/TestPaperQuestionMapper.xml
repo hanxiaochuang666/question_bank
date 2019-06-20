@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.eblcu.questionbank.persistence.dao.TestPaperQuestionMapper">
+<mapper namespace="cn.eblcu.questionbank.persistence.dao.ITestPaperQuestionDao">
   <resultMap id="BaseResultMap" type="cn.eblcu.questionbank.persistence.entity.dto.TestPaperQuestion">
     <id column="test_paper_question_id" jdbcType="INTEGER" property="testPaperQuestionId" />
     <result column="test_pager_id" jdbcType="INTEGER" property="testPagerId" />
@@ -54,8 +54,15 @@
 		<where>
 			<include refid="BaseWhere"/>
 		</where>
-
+		<include refid="cn.eblcu.questionbank.common.orderSqlMap" /> 
+		<include refid="cn.eblcu.questionbank.common.pageSqlMap" /> 
   </select>
+  <delete id="deleteByParams" parameterType="java.util.Map">
+    	delete from test_paper_question
+		<where>
+			<include refid="BaseWhere"/>
+		</where>
+  </delete>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -66,6 +73,14 @@
     delete from test_paper_question
     where test_paper_question_id = #{testPaperQuestionId,jdbcType=INTEGER}
   </delete>
+  <insert id="insert" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestPaperQuestion">
+    insert into test_paper_question (test_paper_question_id, test_pager_id, 
+      question_id, sort, resolve
+      )
+    values (#{testPaperQuestionId,jdbcType=INTEGER}, #{testPagerId,jdbcType=INTEGER}, 
+      #{questionId,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, #{resolve,jdbcType=VARCHAR}
+      )
+  </insert>
   <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestPaperQuestion">
     insert into test_paper_question
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -119,6 +134,14 @@
         resolve = #{resolve,jdbcType=VARCHAR},
       </if>
     </set>
+    where test_paper_question_id = #{testPaperQuestionId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestPaperQuestion">
+    update test_paper_question
+    set test_pager_id = #{testPagerId,jdbcType=INTEGER},
+      question_id = #{questionId,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      resolve = #{resolve,jdbcType=VARCHAR}
     where test_paper_question_id = #{testPaperQuestionId,jdbcType=INTEGER}
   </update>
 </mapper>

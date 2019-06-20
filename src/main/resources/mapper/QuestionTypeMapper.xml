@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.eblcu.questionbank.persistence.dao.QuestionTypeMapper">
+<mapper namespace="cn.eblcu.questionbank.persistence.dao.IQuestionTypeDao">
   <resultMap id="BaseResultMap" type="cn.eblcu.questionbank.persistence.entity.dto.QuestionType">
     <id column="question_type_id" jdbcType="INTEGER" property="questionTypeId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -54,8 +54,15 @@
 		<where>
 			<include refid="BaseWhere"/>
 		</where>
-
+		<include refid="cn.eblcu.questionbank.common.orderSqlMap" /> 
+		<include refid="cn.eblcu.questionbank.common.pageSqlMap" /> 
   </select>
+  <delete id="deleteByParams" parameterType="java.util.Map">
+    	delete from question_type
+		<where>
+			<include refid="BaseWhere"/>
+		</where>
+  </delete>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -66,6 +73,12 @@
     delete from question_type
     where question_type_id = #{questionTypeId,jdbcType=INTEGER}
   </delete>
+  <insert id="insert" parameterType="cn.eblcu.questionbank.persistence.entity.dto.QuestionType">
+    insert into question_type (question_type_id, name, is_objective, 
+      code, status)
+    values (#{questionTypeId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{isObjective,jdbcType=TINYINT}, 
+      #{code,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT})
+  </insert>
   <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.QuestionType">
     insert into question_type
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -119,6 +132,14 @@
         status = #{status,jdbcType=TINYINT},
       </if>
     </set>
+    where question_type_id = #{questionTypeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.eblcu.questionbank.persistence.entity.dto.QuestionType">
+    update question_type
+    set name = #{name,jdbcType=VARCHAR},
+      is_objective = #{isObjective,jdbcType=TINYINT},
+      code = #{code,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT}
     where question_type_id = #{questionTypeId,jdbcType=INTEGER}
   </update>
 </mapper>

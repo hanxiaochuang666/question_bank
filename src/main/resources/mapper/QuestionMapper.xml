@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.eblcu.questionbank.persistence.dao.QuestionMapper">
+<mapper namespace="cn.eblcu.questionbank.persistence.dao.IQuestionDao">
   <resultMap id="BaseResultMap" type="cn.eblcu.questionbank.persistence.entity.dto.Question">
     <id column="question_id" jdbcType="INTEGER" property="questionId" />
     <result column="category_one" jdbcType="INTEGER" property="categoryOne" />
@@ -104,8 +104,15 @@
 		<where>
 			<include refid="BaseWhere"/>
 		</where>
-
+		<include refid="cn.eblcu.questionbank.common.orderSqlMap" /> 
+		<include refid="cn.eblcu.questionbank.common.pageSqlMap" /> 
   </select>
+  <delete id="deleteByParams" parameterType="java.util.Map">
+    	delete from question
+		<where>
+			<include refid="BaseWhere"/>
+		</where>
+  </delete>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -116,7 +123,22 @@
     delete from question
     where question_id = #{questionId,jdbcType=INTEGER}
   </delete>
-  <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.Question">
+  <insert id="insert" parameterType="cn.eblcu.questionbank.persistence.entity.dto.Question">
+    insert into question (question_id, category_one, category_two, 
+      course_id, knowledge_points, difficulty_level, 
+      question_type, question_body, question_sound, 
+      question_opt, question_answer, question_resolve, 
+      org_id, create_user, create_time, 
+      update_user, update_time)
+    values (#{questionId,jdbcType=INTEGER}, #{categoryOne,jdbcType=INTEGER}, #{categoryTwo,jdbcType=INTEGER}, 
+      #{courseId,jdbcType=INTEGER}, #{knowledgePoints,jdbcType=VARCHAR}, #{difficultyLevel,jdbcType=INTEGER}, 
+      #{questionType,jdbcType=INTEGER}, #{questionBody,jdbcType=VARCHAR}, #{questionSound,jdbcType=VARCHAR}, 
+      #{questionOpt,jdbcType=VARCHAR}, #{questionAnswer,jdbcType=VARCHAR}, #{questionResolve,jdbcType=VARCHAR}, 
+      #{orgId,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, #{createTime,jdbcType=DATE}, 
+      #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.Question"
+          useGeneratedKeys="true"  keyProperty="questionId">
     insert into question
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="questionId != null">
@@ -279,4 +301,36 @@
     </set>
     where question_id = #{questionId,jdbcType=INTEGER}
   </update>
+  <update id="updateByPrimaryKey" parameterType="cn.eblcu.questionbank.persistence.entity.dto.Question">
+    update question
+    set category_one = #{categoryOne,jdbcType=INTEGER},
+      category_two = #{categoryTwo,jdbcType=INTEGER},
+      course_id = #{courseId,jdbcType=INTEGER},
+      knowledge_points = #{knowledgePoints,jdbcType=VARCHAR},
+      difficulty_level = #{difficultyLevel,jdbcType=INTEGER},
+      question_type = #{questionType,jdbcType=INTEGER},
+      question_body = #{questionBody,jdbcType=VARCHAR},
+      question_sound = #{questionSound,jdbcType=VARCHAR},
+      question_opt = #{questionOpt,jdbcType=VARCHAR},
+      question_answer = #{questionAnswer,jdbcType=VARCHAR},
+      question_resolve = #{questionResolve,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=DATE}
+    where question_id = #{questionId,jdbcType=INTEGER}
+  </update>
+    <select id="queryQuestionTypeCount"  resultType="cn.eblcu.questionbank.ui.model.QuestionTypeCountModel">
+        select
+        question_type questionType,
+        count(question_id) countNum
+        from question
+        where 1=1
+            and question_id in
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        GROUP BY question_type;
+    </select>
 </mapper>

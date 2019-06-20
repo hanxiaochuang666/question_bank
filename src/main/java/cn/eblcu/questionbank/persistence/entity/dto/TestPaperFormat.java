@@ -1,36 +1,75 @@
 package cn.eblcu.questionbank.persistence.entity.dto;
 
-import lombok.Data;
-
-import java.io.Serializable;
-
-@Data
-public class TestPaperFormat implements Serializable {
-    private static final long serialVersionUID = 2669070322964440478L;
+public class TestPaperFormat {
     /**
+	 *INTEGER
 	 *id
 	 */
     private Integer testPaperFormatId;
 
     /**
+	 *INTEGER
 	 *试卷id
 	 */
     private Integer testPaperId;
 
     /**
+	 *INTEGER
 	 *试题数量
 	 */
     private Integer questionNum;
 
     /**
+	 *INTEGER
 	 *试题类型id
 	 */
     private Integer questionType;
 
     /**
+	 *INTEGER
 	 *试题分
 	 */
     private Integer questionSpec;
+
+    public Integer getTestPaperFormatId() {
+        return testPaperFormatId;
+    }
+
+    public void setTestPaperFormatId(Integer testPaperFormatId) {
+        this.testPaperFormatId = testPaperFormatId;
+    }
+
+    public Integer getTestPaperId() {
+        return testPaperId;
+    }
+
+    public void setTestPaperId(Integer testPaperId) {
+        this.testPaperId = testPaperId;
+    }
+
+    public Integer getQuestionNum() {
+        return questionNum;
+    }
+
+    public void setQuestionNum(Integer questionNum) {
+        this.questionNum = questionNum;
+    }
+
+    public Integer getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(Integer questionType) {
+        this.questionType = questionType;
+    }
+
+    public Integer getQuestionSpec() {
+        return questionSpec;
+    }
+
+    public void setQuestionSpec(Integer questionSpec) {
+        this.questionSpec = questionSpec;
+    }
 
     @Override
     public String toString() {

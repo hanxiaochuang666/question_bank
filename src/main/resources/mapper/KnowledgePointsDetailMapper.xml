@@ -6,7 +6,7 @@
     <result column="knowledge_points_id" jdbcType="INTEGER" property="knowledgePointsId" />
     <result column="parent_id" jdbcType="INTEGER" property="parentId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="title_number" jdbcType="VARCHAR" property="titleNumber" />
+    <result column="title_number" jdbcType="INTEGER" property="titleNumber" />
   </resultMap>
   <sql id="Base_Column_List">
     knowledge_points_detail_id, knowledge_points_id, parent_id, name, title_number
@@ -37,7 +37,7 @@
 			and name=#{name,jdbcType=VARCHAR}
 		</if>
 		<if test="!@org.springframework.util.StringUtils@isEmpty(titleNumber)">
-			and title_number=#{titleNumber,jdbcType=VARCHAR}
+			and title_number=#{titleNumber,jdbcType=INTEGER}
 		</if>
 
   </sql>
@@ -73,6 +73,14 @@
     delete from knowledge_points_detail
     where knowledge_points_detail_id = #{knowledgePointsDetailId,jdbcType=INTEGER}
   </delete>
+  <insert id="insert" parameterType="cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail">
+    insert into knowledge_points_detail (knowledge_points_detail_id, knowledge_points_id, 
+      parent_id, name, title_number
+      )
+    values (#{knowledgePointsDetailId,jdbcType=INTEGER}, #{knowledgePointsId,jdbcType=INTEGER}, 
+      #{parentId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{titleNumber,jdbcType=INTEGER}
+      )
+  </insert>
   <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail"
           useGeneratedKeys="true"  keyProperty="knowledgePointsDetailId">
     insert into knowledge_points_detail
@@ -107,7 +115,7 @@
         #{name,jdbcType=VARCHAR},
       </if>
       <if test="titleNumber != null">
-        #{titleNumber,jdbcType=VARCHAR},
+        #{titleNumber,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -124,9 +132,17 @@
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="titleNumber != null">
-        title_number = #{titleNumber,jdbcType=VARCHAR},
+        title_number = #{titleNumber,jdbcType=INTEGER},
       </if>
     </set>
+    where knowledge_points_detail_id = #{knowledgePointsDetailId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.eblcu.questionbank.persistence.entity.dto.KnowledgePointsDetail">
+    update knowledge_points_detail
+    set knowledge_points_id = #{knowledgePointsId,jdbcType=INTEGER},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      title_number = #{titleNumber,jdbcType=INTEGER}
     where knowledge_points_detail_id = #{knowledgePointsDetailId,jdbcType=INTEGER}
   </update>
 </mapper>

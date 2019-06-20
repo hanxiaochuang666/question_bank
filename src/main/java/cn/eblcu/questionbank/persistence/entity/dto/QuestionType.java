@@ -1,36 +1,75 @@
 package cn.eblcu.questionbank.persistence.entity.dto;
 
-import lombok.Data;
-
-import java.io.Serializable;
-
-@Data
-public class QuestionType implements Serializable {
-    private static final long serialVersionUID = 5342092834562648065L;
+public class QuestionType {
     /**
+	 *INTEGER
 	 *试题类型id
 	 */
     private Integer questionTypeId;
 
     /**
+	 *VARCHAR
 	 *类型名称
 	 */
     private String name;
 
     /**
+	 *TINYINT
 	 *是否是客观题（0:是;1:非）
 	 */
     private Byte isObjective;
 
     /**
+	 *VARCHAR
 	 *编码
 	 */
     private String code;
 
     /**
+	 *TINYINT
 	 *状态：0：启用；1：禁用
 	 */
     private Byte status;
+
+    public Integer getQuestionTypeId() {
+        return questionTypeId;
+    }
+
+    public void setQuestionTypeId(Integer questionTypeId) {
+        this.questionTypeId = questionTypeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public Byte getIsObjective() {
+        return isObjective;
+    }
+
+    public void setIsObjective(Byte isObjective) {
+        this.isObjective = isObjective;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
+    }
+
+    public Byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(Byte status) {
+        this.status = status;
+    }
 
     @Override
     public String toString() {

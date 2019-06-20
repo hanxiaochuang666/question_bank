@@ -1,67 +1,161 @@
 package cn.eblcu.questionbank.persistence.entity.dto;
 
-import lombok.Data;
-
-import java.io.Serializable;
 import java.util.Date;
 
-@Data
-public class TestResult implements Serializable {
-    private static final long serialVersionUID = 5934414790814769210L;
+public class TestResult {
     /**
+	 *INTEGER
 	 *id
 	 */
     private Integer testResultId;
 
     /**
+	 *INTEGER
 	 *学生id
 	 */
     private Integer studentId;
 
     /**
+	 *VARCHAR
 	 *学生名称
 	 */
     private String studentName;
 
     /**
+	 *INTEGER
 	 *试卷id
 	 */
     private Integer testPaperId;
 
     /**
+	 *INTEGER
 	 *作业所处状态0:未开始答题；1:继续答题，2已提交；3批改中；4批改完成；5已过期
 	 */
     private Integer status;
 
     /**
+	 *DATE
 	 *开始答题时间
 	 */
     private Date startTime;
 
     /**
+	 *DATE
 	 *完成答题时间
 	 */
     private Date endTime;
 
     /**
+	 *DATE
 	 *批改时间
 	 */
     private Date markingTime;
 
     /**
+	 *INTEGER
 	 *客观题得分
 	 */
     private Integer objectiveScore;
 
     /**
+	 *INTEGER
 	 *主观题得分
 	 */
     private Integer subjectiveScore;
 
     /**
+	 *INTEGER
 	 *总得分
 	 */
     private Integer totalScore;
+
+    public Integer getTestResultId() {
+        return testResultId;
+    }
+
+    public void setTestResultId(Integer testResultId) {
+        this.testResultId = testResultId;
+    }
+
+    public Integer getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName == null ? null : studentName.trim();
+    }
+
+    public Integer getTestPaperId() {
+        return testPaperId;
+    }
+
+    public void setTestPaperId(Integer testPaperId) {
+        this.testPaperId = testPaperId;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public Date getMarkingTime() {
+        return markingTime;
+    }
+
+    public void setMarkingTime(Date markingTime) {
+        this.markingTime = markingTime;
+    }
+
+    public Integer getObjectiveScore() {
+        return objectiveScore;
+    }
+
+    public void setObjectiveScore(Integer objectiveScore) {
+        this.objectiveScore = objectiveScore;
+    }
+
+    public Integer getSubjectiveScore() {
+        return subjectiveScore;
+    }
+
+    public void setSubjectiveScore(Integer subjectiveScore) {
+        this.subjectiveScore = subjectiveScore;
+    }
+
+    public Integer getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(Integer totalScore) {
+        this.totalScore = totalScore;
+    }
 
     @Override
     public String toString() {

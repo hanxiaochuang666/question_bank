@@ -1,7 +1,9 @@
 package cn.eblcu.questionbank.ui.api;
 
 
+import cn.eblcu.questionbank.client.CheckToken;
 import cn.eblcu.questionbank.domain.service.ITestPaperService;
+import cn.eblcu.questionbank.domain.service.ITestResultService;
 import cn.eblcu.questionbank.infrastructure.util.*;
 import cn.eblcu.questionbank.persistence.entity.dto.TestPaper;
 import cn.eblcu.questionbank.ui.model.BaseModle;
@@ -22,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+//@CheckToken
 @RestController
 @RequestMapping("/testPaper")
 @Api(tags = "试卷管理API")
@@ -32,6 +35,8 @@ public class TestPaperApi {
     @Resource(name="testPaperService")
     private ITestPaperService testPaperService;
 
+    @Resource(name="testResultService")
+    private ITestResultService testResultService;
 
     @RequestMapping(value = "/list", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "查询试卷列表",notes = "查询试卷L列表",httpMethod = "POST")
@@ -101,7 +106,16 @@ public class TestPaperApi {
     @RequestMapping(value = "/deleteById", method = RequestMethod.DELETE ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "根据主键删除试卷",notes = "根据主键删除试卷",httpMethod = "DELETE")
     public BaseModle deleteById(@RequestParam int testPagerId){
-       return BaseModle.getSuccessData(testPaperService.deleteByPrimaryKey(testPagerId));
+        if(testPagerId>0) {
+            Map<String, Object> initMap = MapUtils.initMap("testPaperId", testPagerId);
+            long count = testResultService.selectCount(initMap);
+            if(count>0){
+                logger.info("试卷id为"+testPagerId+"的试卷正在使用中，不能删除");
+                return BaseModle.getFailData(StatusCodeEnum.BUSINESS_ERROR.getCode(),"试卷id为"+testPagerId+"的试卷正在使用中，不能删除");
+            }
+            testPaperService.deleteTestPaperById(testPagerId);
+        }
+        return BaseModle.getSuccessData();
     }
 
     @RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -111,15 +125,6 @@ public class TestPaperApi {
             logger.info("删除请求参数不能为空");
             return BaseModle.getFailData(StatusCodeEnum.PARAM_ERROR.getCode(),StatusCodeEnum.PARAM_ERROR.getDescribe());
         }
-        boolean contains = testPagerIds.contains(";");
-        if(!contains)
-            return BaseModle.getSuccessData(testPaperService.deleteByPrimaryKey(Integer.valueOf(testPagerIds)));
-        String[] split = testPagerIds.split(";");
-        int count=0;
-        for (String s : split) {
-            count++;
-            testPaperService.deleteByPrimaryKey(Integer.valueOf(s));
-        }
-        return BaseModle.getSuccessData(count);
+        return BaseModle.getSuccessData(testPaperService.deleteTestPaperBatch(testPagerIds));
     }
 }

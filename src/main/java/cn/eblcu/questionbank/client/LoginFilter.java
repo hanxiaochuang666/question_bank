@@ -1,6 +1,8 @@
+/*
 package cn.eblcu.questionbank.client;
 
 import cn.eblcu.questionbank.infrastructure.util.HttpReqUtil;
+import cn.eblcu.questionbank.infrastructure.util.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,8 @@ public class LoginFilter implements Filter {
             HTML_LIST.add(s);
         }
         String apiList = blackListPropConfig.getApiList();
+        if(StringUtils.isEmpty(apiList)|| !apiList.contains(";"))
+            return;
         split=apiList.split(";");
         for (String s : split) {
             API_LIST.add(s);
@@ -48,14 +52,16 @@ public class LoginFilter implements Filter {
         boolean isValid=false;
         String requestURI = HttpServletRequest.getRequestURI();
         //暂时无法过滤到静态资源html
-        /*for (String s : HTML_LIST) {
+        */
+/*for (String s : HTML_LIST) {
             if(requestURI.contains(s)) {
                 isValid=true;
                 break;
             }
-        }*/
+        }*//*
+
         for (String s : API_LIST) {
-            if(requestURI.contains(s)) {
+            if(requestURI.equals(s)) {
                 isValid=true;
                 break;
             }
@@ -73,9 +79,11 @@ public class LoginFilter implements Filter {
                 Map<String,Object> responsemap = HttpReqUtil.parseHttpResponse( httpResponse ) ;
                 String isPassedStr = responsemap.get("isPassed").toString();
                 int i = Integer.valueOf(isPassedStr).intValue();
-                /**
+                */
+/**
                  * 返回0表示验证通过,-1表示不通过
-                 */
+                 *//*
+
                 if(i==-1)
                     isDoFilter=false;
             } catch (Exception e) {
@@ -96,10 +104,12 @@ public class LoginFilter implements Filter {
 
     }
 
-    /**
+    */
+/**
      * 登陆验证失败
      * @param httpServletResponse
-     */
+     *//*
+
     private void validFail(HttpServletResponse httpServletResponse,int falg){
         httpServletResponse.setContentType("application/json;charset=utf-8");
         httpServletResponse.setCharacterEncoding("UTF-8");
@@ -119,3 +129,4 @@ public class LoginFilter implements Filter {
 
     }
 }
+*/

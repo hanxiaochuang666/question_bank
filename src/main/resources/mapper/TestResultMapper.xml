@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.eblcu.questionbank.persistence.dao.TestResultMapper">
+<mapper namespace="cn.eblcu.questionbank.persistence.dao.ITestResultDao">
   <resultMap id="BaseResultMap" type="cn.eblcu.questionbank.persistence.entity.dto.TestResult">
     <id column="test_result_id" jdbcType="INTEGER" property="testResultId" />
     <result column="student_id" jdbcType="INTEGER" property="studentId" />
@@ -79,8 +79,15 @@
 		<where>
 			<include refid="BaseWhere"/>
 		</where>
-
+		<include refid="cn.eblcu.questionbank.common.orderSqlMap" /> 
+		<include refid="cn.eblcu.questionbank.common.pageSqlMap" /> 
   </select>
+  <delete id="deleteByParams" parameterType="java.util.Map">
+    	delete from test_result
+		<where>
+			<include refid="BaseWhere"/>
+		</where>
+  </delete>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -91,6 +98,16 @@
     delete from test_result
     where test_result_id = #{testResultId,jdbcType=INTEGER}
   </delete>
+  <insert id="insert" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResult">
+    insert into test_result (test_result_id, student_id, student_name, 
+      test_paper_id, status, start_time, 
+      end_time, marking_time, objective_score, 
+      subjective_score, total_score)
+    values (#{testResultId,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{studentName,jdbcType=VARCHAR}, 
+      #{testPaperId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{startTime,jdbcType=DATE}, 
+      #{endTime,jdbcType=DATE}, #{markingTime,jdbcType=DATE}, #{objectiveScore,jdbcType=INTEGER}, 
+      #{subjectiveScore,jdbcType=INTEGER}, #{totalScore,jdbcType=INTEGER})
+  </insert>
   <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResult">
     insert into test_result
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -198,6 +215,20 @@
         total_score = #{totalScore,jdbcType=INTEGER},
       </if>
     </set>
+    where test_result_id = #{testResultId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResult">
+    update test_result
+    set student_id = #{studentId,jdbcType=INTEGER},
+      student_name = #{studentName,jdbcType=VARCHAR},
+      test_paper_id = #{testPaperId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=DATE},
+      end_time = #{endTime,jdbcType=DATE},
+      marking_time = #{markingTime,jdbcType=DATE},
+      objective_score = #{objectiveScore,jdbcType=INTEGER},
+      subjective_score = #{subjectiveScore,jdbcType=INTEGER},
+      total_score = #{totalScore,jdbcType=INTEGER}
     where test_result_id = #{testResultId,jdbcType=INTEGER}
   </update>
 </mapper>

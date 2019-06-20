@@ -79,3 +79,6 @@ register:
 
 excel:
   importFields: 课程分类编码,课程名称,课程编码,章,章助记码,节,节助记码,知识点,知识点助记码
+tokenConfig:
+  ssoUrl: http://127.0.0.1:9990/user/checkToken
+  open: false

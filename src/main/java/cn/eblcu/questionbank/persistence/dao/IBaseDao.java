@@ -18,4 +18,8 @@ public interface IBaseDao {
     <T> List<T> selectList(Map<String,Object> map);
 
     <T> int deleteByParams(Map<String,Object> map);
+
+    <T> int updateByPrimaryKey(T record);
+
+    <T> int insert(T record);
 }

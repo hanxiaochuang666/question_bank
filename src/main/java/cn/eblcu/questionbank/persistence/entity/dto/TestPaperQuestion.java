@@ -1,36 +1,75 @@
 package cn.eblcu.questionbank.persistence.entity.dto;
 
-import lombok.Data;
-
-import java.io.Serializable;
-
-@Data
-public class TestPaperQuestion implements Serializable {
-    private static final long serialVersionUID = -6823622624874214434L;
+public class TestPaperQuestion {
     /**
+	 *INTEGER
 	 *id
 	 */
     private Integer testPaperQuestionId;
 
     /**
+	 *INTEGER
 	 *试卷id
 	 */
     private Integer testPagerId;
 
     /**
+	 *INTEGER
 	 *试题id
 	 */
     private Integer questionId;
 
     /**
+	 *INTEGER
 	 *排序
 	 */
     private Integer sort;
 
     /**
+	 *VARCHAR
 	 *解析
 	 */
     private String resolve;
+
+    public Integer getTestPaperQuestionId() {
+        return testPaperQuestionId;
+    }
+
+    public void setTestPaperQuestionId(Integer testPaperQuestionId) {
+        this.testPaperQuestionId = testPaperQuestionId;
+    }
+
+    public Integer getTestPagerId() {
+        return testPagerId;
+    }
+
+    public void setTestPagerId(Integer testPagerId) {
+        this.testPagerId = testPagerId;
+    }
+
+    public Integer getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
+    public String getResolve() {
+        return resolve;
+    }
+
+    public void setResolve(String resolve) {
+        this.resolve = resolve == null ? null : resolve.trim();
+    }
 
     @Override
     public String toString() {
