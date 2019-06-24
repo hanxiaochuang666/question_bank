@@ -1,7 +1,11 @@
 package cn.eblcu.questionbank.ui.config;
 
 import cn.eblcu.questionbank.infrastructure.util.HttpReqUtil;
+import cn.eblcu.questionbank.infrastructure.util.SupperTokenUtils;
 import cn.eblcu.questionbank.ui.exception.BusinessException;
+import cn.eblcu.questionbank.ui.model.BaseModle;
+import cn.eblcu.questionbank.ui.model.StatusCodeEnum;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.aspectj.lang.annotation.*;
@@ -15,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.Map;
 
 @Configuration
@@ -48,13 +53,18 @@ public class AopConfig {
     }
 
     @Before("@within(cn.eblcu.questionbank.client.CheckToken) || @annotation(cn.eblcu.questionbank.client.CheckToken)")
-    public void doBefore(JoinPoint joinPoint) throws BusinessException {
+    public void doBefore(JoinPoint joinPoint) throws Exception {
 
         log.info("进入方法>>>>>>>" + getFunctionName(joinPoint));
         Object[] args = joinPoint.getArgs();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
         if (open){
+            int userId = SupperTokenUtils.getUserByToken(request);
+            if(userId==-1){
+                log.info("用户信息无效，请注册或登录!");
+                throw new BusinessException("-1", "用户信息无效，请注册或登录!");
+            }
             checked(request, response);
         }
         String url = request.getRequestURL().toString();
@@ -100,7 +110,7 @@ public class AopConfig {
         String token = request.getHeader("token");
         if (token == null) {
             //2表示没有传token
-            throw new BusinessException("-1", "请求参数token为空！");
+            validFail(response,-1);
         }
         try {
             HttpResponse httpResponse = HttpReqUtil.postObjectReq(ssoUrl, token);
@@ -115,12 +125,33 @@ public class AopConfig {
         } catch (Exception e) {
             e.printStackTrace();
             log.info("请求验证token失败");
-            throw new BusinessException("3", "sso平台故障！");
+            validFail(response,3);
         }
         if (!isDoFilter) {
-            throw new BusinessException("-1", "token验证失败！！");
+            validFail(response,-2);
+            //抛出的异常无法被拦截处理
+            /*throw new BusinessException("-2", "token验证失败！！");*/
         }
         return true;
     }
 
+    private void validFail(HttpServletResponse httpServletResponse,int flag){
+        httpServletResponse.setContentType("application/json;charset=utf-8");
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        PrintWriter writer=null;
+        try {
+            writer = httpServletResponse.getWriter();
+            //防止与一些业务数据冲突
+            if(-1==flag)
+                writer.append(JSON.toJSONString(BaseModle.getFailData(StatusCodeEnum.BUSINESS_ERROR.getCode(),"请求参数token不能为空！")));
+            else if(-2==flag)
+                writer.append(JSON.toJSONString(BaseModle.getFailData(StatusCodeEnum.BUSINESS_ERROR.getCode(),"token验证失败！")));
+            else
+                writer.append(JSON.toJSONString(BaseModle.getFailData(StatusCodeEnum.BUSINESS_ERROR.getCode(),"sso平台故障！")));
+        }catch (Exception e){
+            log.info("回写数据失败");
+        }finally {
+            writer.close();
+        }
+    }
 }

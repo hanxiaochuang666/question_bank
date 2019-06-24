@@ -7,9 +7,9 @@
     <result column="student_name" jdbcType="VARCHAR" property="studentName" />
     <result column="test_paper_id" jdbcType="INTEGER" property="testPaperId" />
     <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="start_time" jdbcType="DATE" property="startTime" />
-    <result column="end_time" jdbcType="DATE" property="endTime" />
-    <result column="marking_time" jdbcType="DATE" property="markingTime" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="marking_time" jdbcType="TIMESTAMP" property="markingTime" />
     <result column="objective_score" jdbcType="INTEGER" property="objectiveScore" />
     <result column="subjective_score" jdbcType="INTEGER" property="subjectiveScore" />
     <result column="total_score" jdbcType="INTEGER" property="totalScore" />
@@ -47,13 +47,13 @@
 			and status=#{status,jdbcType=INTEGER}
 		</if>
 		<if test="!@org.springframework.util.StringUtils@isEmpty(startTime)">
-			and start_time=#{startTime,jdbcType=DATE}
+			and start_time=#{startTime,jdbcType=TIMESTAMP}
 		</if>
 		<if test="!@org.springframework.util.StringUtils@isEmpty(endTime)">
-			and end_time=#{endTime,jdbcType=DATE}
+			and end_time=#{endTime,jdbcType=TIMESTAMP}
 		</if>
 		<if test="!@org.springframework.util.StringUtils@isEmpty(markingTime)">
-			and marking_time=#{markingTime,jdbcType=DATE}
+			and marking_time=#{markingTime,jdbcType=TIMESTAMP}
 		</if>
 		<if test="!@org.springframework.util.StringUtils@isEmpty(objectiveScore)">
 			and objective_score=#{objectiveScore,jdbcType=INTEGER}
@@ -104,8 +104,8 @@
       end_time, marking_time, objective_score, 
       subjective_score, total_score)
     values (#{testResultId,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{studentName,jdbcType=VARCHAR}, 
-      #{testPaperId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{startTime,jdbcType=DATE}, 
-      #{endTime,jdbcType=DATE}, #{markingTime,jdbcType=DATE}, #{objectiveScore,jdbcType=INTEGER}, 
+      #{testPaperId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP},
+      #{endTime,jdbcType=TIMESTAMP}, #{markingTime,jdbcType=TIMESTAMP}, #{objectiveScore,jdbcType=INTEGER},
       #{subjectiveScore,jdbcType=INTEGER}, #{totalScore,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResult">
@@ -162,13 +162,13 @@
         #{status,jdbcType=INTEGER},
       </if>
       <if test="startTime != null">
-        #{startTime,jdbcType=DATE},
+        #{startTime,jdbcType=TIMESTAMP},
       </if>
       <if test="endTime != null">
-        #{endTime,jdbcType=DATE},
+        #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="markingTime != null">
-        #{markingTime,jdbcType=DATE},
+        #{markingTime,jdbcType=TIMESTAMP},
       </if>
       <if test="objectiveScore != null">
         #{objectiveScore,jdbcType=INTEGER},
@@ -197,13 +197,13 @@
         status = #{status,jdbcType=INTEGER},
       </if>
       <if test="startTime != null">
-        start_time = #{startTime,jdbcType=DATE},
+        start_time = #{startTime,jdbcType=TIMESTAMP},
       </if>
       <if test="endTime != null">
-        end_time = #{endTime,jdbcType=DATE},
+        end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="markingTime != null">
-        marking_time = #{markingTime,jdbcType=DATE},
+        marking_time = #{markingTime,jdbcType=TIMESTAMP},
       </if>
       <if test="objectiveScore != null">
         objective_score = #{objectiveScore,jdbcType=INTEGER},
@@ -223,9 +223,9 @@
       student_name = #{studentName,jdbcType=VARCHAR},
       test_paper_id = #{testPaperId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
-      start_time = #{startTime,jdbcType=DATE},
-      end_time = #{endTime,jdbcType=DATE},
-      marking_time = #{markingTime,jdbcType=DATE},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      marking_time = #{markingTime,jdbcType=TIMESTAMP},
       objective_score = #{objectiveScore,jdbcType=INTEGER},
       subjective_score = #{subjectiveScore,jdbcType=INTEGER},
       total_score = #{totalScore,jdbcType=INTEGER}

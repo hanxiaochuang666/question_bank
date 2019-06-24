@@ -5,12 +5,16 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel(value = "试题对象")
 public class QuestionModel implements Serializable {
     
     private static final long serialVersionUID = 8933558368212829442L;
+
+    @ApiModelProperty(value = "主键id，试题编辑的时候必传")
+    private Integer questionId;
 
     @ApiModelProperty(value = "类目一级id")
     private Integer categoryOne;
@@ -27,8 +31,8 @@ public class QuestionModel implements Serializable {
     @ApiModelProperty(value = "难度等级(0：无;1:易；2：中；3：难)")
     private Integer difficultyLevel;
 
-    @ApiModelProperty(value = "试题类型id")
-    private Integer questionType;
+    @ApiModelProperty(value = "试题类型编码")
+    private String questionType;
 
     @ApiModelProperty(value = "题干")
     private String questionBody;
@@ -47,5 +51,8 @@ public class QuestionModel implements Serializable {
 
     @ApiModelProperty(value = "机构id")
     private Integer orgId;
+
+    @ApiModelProperty(value = "子题列表，综合题使用")
+    private List<QuestionModel> modelList;
 
 }
