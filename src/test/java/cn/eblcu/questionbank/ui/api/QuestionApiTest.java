@@ -1,5 +1,6 @@
 package cn.eblcu.questionbank.ui.api;
 
+import cn.eblcu.questionbank.ui.model.QueryQuestionModel;
 import cn.eblcu.questionbank.ui.model.QuestionModel;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,6 +21,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +43,7 @@ public class QuestionApiTest {
     }
 
     @Test
-    public void insertQuestion() throws Exception{
+    public void insertQuestionTest() throws Exception{
 
         String danXuan = "{\"categoryOne\":11,\"categoryTwo\":22,\"courseId\":123,\"difficultyLevel\":1,\"knowledgePoints\":\"1081;1082;1983\",\"orgId\":123123,\"questionAnswer\":\"北京\",\"questionBody\":\"我国的首都是下列哪个？\",\"questionOpt\":\"[{'option':'北京'},{'option':'上海'},{'option':'广州'},{'option':'深圳'}]\",\"questionResolve\":\"中国首都是北京，上海是直辖市\",\"questionSound\":\"123we323re223432\",\"questionType\":\"danXuan\"}";
         String duoXuan = "{\"categoryOne\":11,\"categoryTwo\":22,\"courseId\":123,\"difficultyLevel\":1,\"knowledgePoints\":\"1081;1983\",\"orgId\":123123,\"questionAnswer\":\"太原#&&&#南京\",\"questionBody\":\"下列哪些不是直辖市？\",\"questionOpt\":\"[{'option':'北京'},{'option':'上海'},{'option':'太原'},{'option':'南京'}]\",\"questionResolve\":\"中国共有4个直辖市：北京市、上海市、天津市、重庆市\",\"questionSound\":\"123we323re223432\",\"questionType\":\"duoXuan\"}";
@@ -52,7 +57,7 @@ public class QuestionApiTest {
         MvcResult mvcResult =mockMvc.perform(MockMvcRequestBuilders.post("/question/insertQuestion")
                 .header("token","AItgJBAEsTI6FdGtTh266zZeHJ9FYGhc86s6Bsli0LXPdTWEIfmBeuzNdgOdiB+pxsRy0t5dUO/MkPG1ZcWlMwr+0txkG/+lW85dQEsgDch/LydR7NZxRXkNgcVNiuvNR6UVpODqtymcssBWfss+olMVqMuVwgcBsIy33BKXomE6zXFQ+ToaV9b4HL3xKWnEmIaiskU2knWev/StJF5W0vxf1a3AcNry0hDWkdRUH7wdgkRTBDLn+eoUslWDnjBEmABbNO6AZFxoONcfN7IY3/HhSIBswITMEZICNObivsOca9usv/eZoIvUdYxolxnRllY/Tdgg4MfWALsPm1L3yk/ALsluSujr4Yj90aqdSjgFVUqt0HIW2nIXBN9NWakj//ObQycTQztxpHwcNj8iyuCCmqSXaR6JIn1QU2Q81LIzyres/CO6H18Qm0qpkoWK42FG9HOolzu8qUWQuaYzEr4cmQA0ajv9WJlkfzWAvWDxYqDvlGyxORGnMGhXAItO")
 //                .content(JSONObject.toJSONString(getModel()))
-                .content(jiSuan)
+                .content(wenDa)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andDo(MockMvcResultHandlers.print())
@@ -133,7 +138,7 @@ public class QuestionApiTest {
     }
 
     @Test
-    public void updateQuestion() throws Exception{
+    public void updateQuestionTest() throws Exception{
         QuestionModel model = new QuestionModel();
         model.setQuestionId(1);
         model.setQuestionResolve("测试试题修改");
@@ -151,7 +156,7 @@ public class QuestionApiTest {
     }
 
     @Test
-    public void deleteQuestion() throws Exception {
+    public void deleteQuestionTest() throws Exception {
         MvcResult mvcResult =mockMvc.perform(MockMvcRequestBuilders.delete("/question/deleteQuestion")
                 .header("token","AItgJBAEsTI6FdGtTh266zZeHJ9FYGhc86s6Bsli0LXPdTWEIfmBeuzNdgOdiB+pxsRy0t5dUO/MkPG1ZcWlMwr+0txkG/+lW85dQEsgDch/LydR7NZxRXkNgcVNiuvNR6UVpODqtymcssBWfss+olMVqMuVwgcBsIy33BKXomE6zXFQ+ToaV9b4HL3xKWnEmIaiskU2knWev/StJF5W0vxf1a3AcNry0hDWkdRUH7wdgkRTBDLn+eoUslWDnjBEmABbNO6AZFxoONcfN7IY3/HhSIBswITMEZICNObivsOca9usv/eZoIvUdYxolxnRllY/Tdgg4MfWALsPm1L3yk/ALsluSujr4Yj90aqdSjgFVUqt0HIW2nIXBN9NWakj//ObQycTQztxpHwcNj8iyuCCmqSXaR6JIn1QU2Q81LIzyres/CO6H18Qm0qpkoWK42FG9HOolzu8qUWQuaYzEr4cmQA0ajv9WJlkfzWAvWDxYqDvlGyxORGnMGhXAItO")
                 .param("questionId","1")
@@ -166,7 +171,7 @@ public class QuestionApiTest {
     }
 
     @Test
-    public void selectQuestionListCount() throws Exception {
+    public void selectQuestionListCountTest() throws Exception {
         MvcResult mvcResult =mockMvc.perform(MockMvcRequestBuilders.get("/question/selectQuestionListCount")
                 .header("token","AItgJBAEsTI6FdGtTh266zZeHJ9FYGhc86s6Bsli0LXPdTWEIfmBeuzNdgOdiB+pxsRy0t5dUO/MkPG1ZcWlMwr+0txkG/+lW85dQEsgDch/LydR7NZxRXkNgcVNiuvNR6UVpODqtymcssBWfss+olMVqMuVwgcBsIy33BKXomE6zXFQ+ToaV9b4HL3xKWnEmIaiskU2knWev/StJF5W0vxf1a3AcNry0hDWkdRUH7wdgkRTBDLn+eoUslWDnjBEmABbNO6AZFxoONcfN7IY3/HhSIBswITMEZICNObivsOca9usv/eZoIvUdYxolxnRllY/Tdgg4MfWALsPm1L3yk/ALsluSujr4Yj90aqdSjgFVUqt0HIW2nIXBN9NWakj//ObQycTQztxpHwcNj8iyuCCmqSXaR6JIn1QU2Q81LIzyres/CO6H18Qm0qpkoWK42FG9HOolzu8qUWQuaYzEr4cmQA0ajv9WJlkfzWAvWDxYqDvlGyxORGnMGhXAItO")
                 .param("categoryOne","11")
@@ -183,13 +188,18 @@ public class QuestionApiTest {
     }
 
     @Test
-    public void selectQuestionList() throws Exception {
+    public void selectQuestionListTest() throws Exception {
+        QueryQuestionModel model = new QueryQuestionModel();
+        model.setCategoryOne(11);
+        model.setCategoryTwo(22);
+        model.setCourseId(123);
+        model.setDifficultyLevel(-1);
+        model.setKnowledgePoints("-1");
+        model.setQuestionType("danXuan");
+        model.setQuestionBody("中国");
         MvcResult mvcResult =mockMvc.perform(MockMvcRequestBuilders.get("/question/selectQuestionList")
                 .header("token","AItgJBAEsTI6FdGtTh266zZeHJ9FYGhc86s6Bsli0LXPdTWEIfmBeuzNdgOdiB+pxsRy0t5dUO/MkPG1ZcWlMwr+0txkG/+lW85dQEsgDch/LydR7NZxRXkNgcVNiuvNR6UVpODqtymcssBWfss+olMVqMuVwgcBsIy33BKXomE6zXFQ+ToaV9b4HL3xKWnEmIaiskU2knWev/StJF5W0vxf1a3AcNry0hDWkdRUH7wdgkRTBDLn+eoUslWDnjBEmABbNO6AZFxoONcfN7IY3/HhSIBswITMEZICNObivsOca9usv/eZoIvUdYxolxnRllY/Tdgg4MfWALsPm1L3yk/ALsluSujr4Yj90aqdSjgFVUqt0HIW2nIXBN9NWakj//ObQycTQztxpHwcNj8iyuCCmqSXaR6JIn1QU2Q81LIzyres/CO6H18Qm0qpkoWK42FG9HOolzu8qUWQuaYzEr4cmQA0ajv9WJlkfzWAvWDxYqDvlGyxORGnMGhXAItO")
-                .param("categoryOne","11")
-                .param("categoryTwo","22")
-                .param("courseId","123")
-                .param("questionType","2")
+                .content(JSONObject.toJSONString(model))
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andDo(MockMvcResultHandlers.print())
@@ -198,5 +208,23 @@ public class QuestionApiTest {
         String content = mvcResult.getResponse().getContentAsString();
         Assert.assertEquals(200, status);
         System.out.println("返回参数:" + content);
+    }
+
+    @Test
+    public void importQuestionTest() throws Exception {
+        File file = new File("D:\\SVNworkspace\\QuestionBank\\（Excel版）试题导入模板.xlsx");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "（Excel版）试题导入模板.xlsx", MediaType.TEXT_PLAIN_VALUE,
+                new BufferedInputStream(new FileInputStream(file)));
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.fileUpload("/question/importQuestion")
+                .file(mockMultipartFile)
+                .header("token","AItgJBAEsTI6FdGtTh266zZeHJ9FYGhc86s6Bsli0LXPdTWEIfmBeuzNdgOdiB+pxsRy0t5dUO/MkPG1ZcWlMwr+0txkG/+lW85dQEsgDch/LydR7NZxRXkNgcVNiuvNR6UVpODqtymcssBWfss+olMVqMuVwgcBsIy33BKXomE6zXFQ+ToaV9b4HL3xKWnEmIaiskU2knWev/StJF5W0vxf1a3AcNry0hDWkdRUH7wdgkRTBDLn+eoUslWDnjBEmABbNO6AZFxoONcfN7IY3/HhSIBswITMEZICNObivsOca9usv/eZoIvUdYxolxnRllY/Tdgg4MfWALsPm1L3yk/ALsluSujr4Yj90aqdSjgFVUqt0HIW2nIXBN9NWakj//ObQycTQztxpHwcNj8iyuCCmqSXaR6JIn1QU2Q81LIzyres/CO6H18Qm0qpkoWK42FG9HOolzu8qUWQuaYzEr4cmQA0ajv9WJlkfzWAvWDxYqDvlGyxORGnMGhXAItO")
+                .param("categoryOne","11")
+                .param("categoryTwo","12")
+                .param("courseId","123")
+                .param("orgId","1111111111")
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+        Assert.assertEquals(200, mvcResult.getResponse().getStatus());
     }
 }

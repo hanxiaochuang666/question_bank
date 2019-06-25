@@ -4,6 +4,7 @@ import cn.eblcu.questionbank.infrastructure.factory.XWPFFactory.IXwptWrite;
 import cn.eblcu.questionbank.infrastructure.factory.XWPFFactory.XwptAbstractWrite;
 import cn.eblcu.questionbank.infrastructure.factory.XWPFFactory.model.DocModel;
 import cn.eblcu.questionbank.infrastructure.factory.XWPFFactory.model.DocQueModel;
+import cn.eblcu.questionbank.infrastructure.util.StringUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xwpf.usermodel.TextAlignment;
@@ -44,7 +45,9 @@ public class SingleChoiceXwptWriteImpl extends XwptAbstractWrite implements IXwp
         XWPFParagraph p1 = docxDocument.createParagraph();
         XWPFRun run = p1.createRun();
         p1.setStyle(" 标题 8");
-        run.setFontSize(10);
+        run.setFontSize(20);
+        if(docModel.getSort()>=5 && StringUtils.isEmpty(docModel.getQuestionTypeName()))
+            return;
         switch (docModel.getSort()){
             case 1:
                 run.setText("一、");
@@ -83,7 +86,7 @@ public class SingleChoiceXwptWriteImpl extends XwptAbstractWrite implements IXwp
         XWPFParagraph paragraph = docxDocument.createParagraph();
         paragraph.setVerticalAlignment(TextAlignment.BOTTOM);
         XWPFRun run = paragraph.createRun();
-        run.setFontSize(8);
+        run.setFontSize(16);
         paragraph.setStyle(" 正文 ");
         run.addTab();
         if(number>0)
@@ -97,7 +100,7 @@ public class SingleChoiceXwptWriteImpl extends XwptAbstractWrite implements IXwp
         XWPFParagraph paragraph = docxDocument.createParagraph();
         paragraph.setVerticalAlignment(TextAlignment.BOTTOM);
         XWPFRun run = paragraph.createRun();
-        run.setFontSize(6);
+        run.setFontSize(14);
         JSONArray objects = JSONArray.parseArray(questionOpt);
         int size = objects.size();
         for (Object object : objects) {
@@ -119,7 +122,7 @@ public class SingleChoiceXwptWriteImpl extends XwptAbstractWrite implements IXwp
         XWPFRun run = paragraph.createRun();
         //加粗
         run.setBold(true);
-        run.setFontSize(6);
+        run.setFontSize(14);
         run.addTab();
         run.addTab();
         run.setText("答案: "+answer);
@@ -130,7 +133,7 @@ public class SingleChoiceXwptWriteImpl extends XwptAbstractWrite implements IXwp
         XWPFParagraph paragraph = docxDocument.createParagraph();
         paragraph.setVerticalAlignment(TextAlignment.BOTTOM);
         XWPFRun run = paragraph.createRun();
-        run.setFontSize(6);
+        run.setFontSize(14);
         run.addTab();
         run.addTab();
         run.setColor("FF0000");
@@ -138,7 +141,7 @@ public class SingleChoiceXwptWriteImpl extends XwptAbstractWrite implements IXwp
         //run.setColor("BED4F1");
         run.addBreak();
         XWPFRun run1 = paragraph.createRun();
-        run1.setFontSize(6);
+        run1.setFontSize(14);
         run1.addTab();
         run1.addTab();
         run1.addTab();

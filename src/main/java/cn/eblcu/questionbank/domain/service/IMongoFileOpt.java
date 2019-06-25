@@ -13,7 +13,7 @@ public interface IMongoFileOpt {
      * @Param 
      * @return 
      **/
-    boolean uploadFile(MultipartFile multiportFile)throws Exception;
+    String uploadFile(MultipartFile multiportFile)throws Exception;
     
     /**
      * @Author 焦冬冬

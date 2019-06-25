@@ -8,6 +8,7 @@ import cn.eblcu.questionbank.infrastructure.util.MapUtils;
 import cn.eblcu.questionbank.infrastructure.util.StringUtils;
 import cn.eblcu.questionbank.persistence.entity.dto.TestPaper;
 import cn.eblcu.questionbank.persistence.entity.dto.TestPaperFormat;
+import cn.eblcu.questionbank.ui.exception.BusinessException;
 import cn.eblcu.questionbank.ui.model.BaseModle;
 import cn.eblcu.questionbank.ui.model.PaperFormatInfo;
 import cn.eblcu.questionbank.ui.model.StatusCodeEnum;
@@ -24,7 +25,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-//@CheckToken
+@CheckToken
 @RestController
 @RequestMapping("/testPaperFormat")
 @Api(tags = "试卷组成管理API")
@@ -45,7 +46,6 @@ public class TestPaperFormatApi {
             return BaseModle.getFailData(StatusCodeEnum.PARAM_ERROR.getCode(),"根据试卷组成testPaperFormatId参数错误");
         }
         Map<String, Object> initMap = MapUtils.initMap("testPaperId", testPaperId);
-
         List<TestPaperFormat> list = testPaperFormatService.selectList(initMap);
         return BaseModle.getSuccessData(list);
     }
@@ -53,7 +53,7 @@ public class TestPaperFormatApi {
 
     @RequestMapping(value = "/saveTestPaperFormat", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "保存试卷组成",notes = "保存试卷组成",httpMethod = "POST")
-    public BaseModle saveTestPaperFormat(@Valid @RequestBody TestPaperFormatViewModel testPaperFormatViewModel){
+    public BaseModle saveTestPaperFormat(@Valid @RequestBody TestPaperFormatViewModel testPaperFormatViewModel)throws Exception{
         if(null==testPaperFormatViewModel.getTestPaperId()){
             logger.info("参数错误："+testPaperFormatViewModel.toString());
             return BaseModle.getFailData(StatusCodeEnum.PARAM_ERROR.getCode(),"参数错误："+testPaperFormatViewModel.toString());
@@ -61,7 +61,7 @@ public class TestPaperFormatApi {
         TestPaper testPaper = testPaperService.selectByPrimaryKey(testPaperFormatViewModel.getTestPaperId());
         if(testPaper==null)
             return BaseModle.getFailData(StatusCodeEnum.PARAM_ERROR.getCode(),"试卷不存在");
-        testPaperFormatService.syncPaperFormatInfo(testPaperFormatViewModel);
-        return BaseModle.getSuccessData();
+
+        return testPaperFormatService.syncPaperFormatInfo(testPaperFormatViewModel);
     }
 }

@@ -20,12 +20,19 @@ public interface ITestPaperQuestionService extends IBaseService {
      * @param testPaperQuestionLst
      * @return
      */
-    BaseModle saveTestPaperQuestion(List<TestPaperQuestion> testPaperQuestionLst);
+    BaseModle saveTestPaperQuestion(List<TestPaperQuestion> testPaperQuestionLst)throws Exception;
 
     /**
      * 智能组卷
      * @param testPaperId
      * @param knowledges
      */
-    void intellectPaper(int testPaperId,String knowledges);
+    BaseModle intellectPaper(int testPaperId,String knowledges)throws Exception;
+
+    /**
+     * 根据试卷id生成试卷word
+     * @param testPaperId
+     * @return String
+     */
+    String createNewWord(int testPaperId)throws Exception;
 }

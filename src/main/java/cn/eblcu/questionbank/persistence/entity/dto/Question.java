@@ -2,10 +2,12 @@ package cn.eblcu.questionbank.persistence.entity.dto;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Question {
+public class Question implements Serializable {
+    private static final long serialVersionUID = 4674722117809678595L;
     /**
 	 *试题id
 	 */

@@ -37,7 +37,7 @@ public class MongoFileOptImpl implements IMongoFileOpt {
     private GridConfig gridConfig;
 
     @Override
-    public boolean uploadFile(MultipartFile multiportFile)throws Exception{
+    public String uploadFile(MultipartFile multiportFile)throws Exception{
         //1.存储文件
         String originalFilename = multiportFile.getOriginalFilename();
         log.info("上传文件名："+originalFilename);
@@ -46,7 +46,7 @@ public class MongoFileOptImpl implements IMongoFileOpt {
         ObjectId fileId = gridFsTemplate.store(ins, originalFilename,contentType);
         log.info("fileId="+fileId.toString());
         //TODO 2.将fileId维护到关系型数据库
-        return false;
+        return fileId.toString();
     }
 
     @Override

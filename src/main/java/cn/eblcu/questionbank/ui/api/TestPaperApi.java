@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
@@ -84,8 +85,7 @@ public class TestPaperApi {
         testPaper.setCreateUser(userId);
         int count=0;
         //3.保存
-        if(testPaper.getTestPaperId().intValue()==-1) {
-            testPaper.setTestPaperId(null);
+        if(testPaper.getTestPaperId()==null) {
             count= testPaperService.insertSelective(testPaper);
         }else {
             count=testPaperService.updateByPrimaryKeySelective(testPaper);
@@ -127,4 +127,19 @@ public class TestPaperApi {
         }
         return BaseModle.getSuccessData(testPaperService.deleteTestPaperBatch(testPagerIds));
     }
+
+    @RequestMapping(value = "/exporTestPaperById", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "导出试卷",notes = "导出试卷",httpMethod = "GET")
+    public BaseModle exporTestPaperById(@RequestParam int testPagerId, HttpServletResponse response){
+        if(testPagerId>0){
+            TestPaper testPaper= testPaperService.selectByPrimaryKey(testPagerId);
+            String exportPath = testPaper.getExportPath();
+            int i = exportPath.lastIndexOf("/");
+            String fileName = exportPath.substring(i+1);
+            String filePath=exportPath.substring(0,i+1);
+            FileUtils.downLoad(response,filePath,fileName);
+        }
+        return BaseModle.getSuccessData();
+    }
+
 }

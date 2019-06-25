@@ -45,7 +45,7 @@ public class MatchingXwptWriteImpl extends SingleChoiceXwptWriteImpl{
         XWPFParagraph paragraph = docxDocument.createParagraph();
         paragraph.setVerticalAlignment(TextAlignment.BOTTOM);
         XWPFRun run = paragraph.createRun();
-        run.setFontSize(6);
+        run.setFontSize(14);
         JSONArray objects = JSONArray.parseArray(questionOpt);
         int size = objects.size();
         for (Object object : objects) {

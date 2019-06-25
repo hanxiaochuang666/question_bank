@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class TestPaperCreateModel {
-    private int testPaperId;
+    private Integer testPaperId;
     @NotBlank(message = "试卷名称name不能为空")
     private String name;
     @Min(value = 1,message = "类目1 categoryOne 非法")

@@ -170,6 +170,7 @@ public class TestPaperFactoryTests {
         xwptFactory.addXwptWrite(new SynthesisXwptWriteImpl());
         //试卷配对题测试
         xwptFactory.addDocModel(docModel6);
+        docModel6.setQuestionTypeName(null);
         xwptFactory.addXwptWrite(new MatchingXwptWriteImpl());
         //试卷选词填空题测试
         xwptFactory.addDocModel(docModel7);

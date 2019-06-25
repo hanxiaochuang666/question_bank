@@ -353,10 +353,10 @@
         <if test="!@org.springframework.util.StringUtils@isEmpty(createUserId)">
             AND create_user=#{createUserId,jdbcType=INTEGER}
         </if>
+        AND question_type <![CDATA[ < ]]> 100
         GROUP BY question_type
     </select>
-
-    <select id="selectListByName" parameterType="java.util.Map" resultMap="BaseResultMap">
+    <select id="selectListByPoints" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from question
@@ -371,7 +371,7 @@
             and course_id=#{courseId,jdbcType=INTEGER}
         </if>
         <if test="!@org.springframework.util.StringUtils@isEmpty(knowledgePoints)">
-            and knowledge_points=#{knowledgePoints,jdbcType=VARCHAR}
+            and knowledge_points like concat('%',#{knowledgePoints,jdbcType=VARCHAR},'%')
         </if>
         <if test="!@org.springframework.util.StringUtils@isEmpty(difficultyLevel)">
             and difficulty_level=#{difficultyLevel,jdbcType=INTEGER}
@@ -380,7 +380,7 @@
             and question_type=#{questionType,jdbcType=INTEGER}
         </if>
         <if test="!@org.springframework.util.StringUtils@isEmpty(questionBody)">
-            and question_body=#{questionBody,jdbcType=VARCHAR}
+            and question_body like concat('%',#{questionBody,jdbcType=VARCHAR},'%')
         </if>
         <include refid="cn.eblcu.questionbank.common.orderSqlMap" />
         <include refid="cn.eblcu.questionbank.common.pageSqlMap" />

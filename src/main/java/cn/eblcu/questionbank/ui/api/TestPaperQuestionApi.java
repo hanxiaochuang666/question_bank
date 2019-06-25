@@ -30,7 +30,7 @@ public class TestPaperQuestionApi {
 
     @RequestMapping(value = "/saveTestPaperQuestion", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "保存试卷试题",notes = "保存试卷试题",httpMethod = "POST")
-    public BaseModle saveTestPaperQuestion(@RequestBody List<TestPaperQuestion> testPaperQuestionLst){
+    public BaseModle saveTestPaperQuestion(@RequestBody List<TestPaperQuestion> testPaperQuestionLst)throws Exception{
         return testPaperQuestionService.saveTestPaperQuestion(testPaperQuestionLst);
     }
 }

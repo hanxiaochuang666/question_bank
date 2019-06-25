@@ -32,8 +32,8 @@ import java.util.Map;
 public class KnowledgePointsServiceImpl implements IKnowledgePointsService {
 
 
-    @Value("${excel.importFields}")
-    private String importFields;
+    @Value("${excel.classFields}")
+    private String classFields;
 
     @Autowired
     private IKnowledgePointsDao pointsDao;
@@ -50,7 +50,7 @@ public class KnowledgePointsServiceImpl implements IKnowledgePointsService {
         // 验证字段
         importParams.setNeedVerfiy(true);
         // 验证标题是否正确
-        importParams.setImportFields(importFields.split(","));
+        importParams.setImportFields(classFields.split(","));
         try {
             // 使用原生的，可以返回成功条数，失败条数
             ExcelImportResult<KnowledgePointsModel> result = ExcelImportUtil.importExcelMore(file.getInputStream(), KnowledgePointsModel.class,

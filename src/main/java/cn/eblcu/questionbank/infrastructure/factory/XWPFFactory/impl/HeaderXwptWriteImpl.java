@@ -32,12 +32,14 @@ public class HeaderXwptWriteImpl extends XwptAbstractWrite implements IXwptWrite
 
         p1.setVerticalAlignment(TextAlignment.TOP);
         p1.setStyle(" 标题 3");
+        run.setFontSize(25);
         run.setText(docModel.getQuestionTypeName());
         if(docModel.getTotalScore()>0){
             XWPFParagraph p2 = docxDocument.createParagraph();
             XWPFRun p2Run = p2.createRun();
             p2.setAlignment(ParagraphAlignment.CENTER);
             p2.setStyle(" 正文 ");
+            p2Run.setFontSize(20);
             p2Run.setText("总分:"+docModel.getTotalScore()+"分");
             p2Run.addBreak();
         }

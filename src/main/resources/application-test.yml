@@ -7,9 +7,11 @@ mybatis:
   type-aliases-package: cn.eblcu.questionbank.mapper
   type-handlers-package: org.apache.ibatis.type.LocalDateTypeHandler
   configuration:
-  # 启动懒加载
+    #Mysql  SQL打印
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 启动懒加载
     lazy-loading-enabled: true
-  #false 为按需加载，可通过fetchType="eager"设置为立即加载
+    #false 为按需加载，可通过fetchType="eager"设置为立即加载
     aggressive-lazy-loading: false
     lazy-load-trigger-methods:
 
@@ -78,7 +80,10 @@ register:
   filePath: D:/key/
 
 excel:
-  importFields: 课程分类编码,课程名称,课程编码,章,章助记码,节,节助记码,知识点,知识点助记码
+  classFields: 课程分类编码,课程名称,课程编码,章,章助记码,节,节助记码,知识点,知识点助记码
+  questionFields: 题型,子题型,题干,选项,答案,解析,难度,课程结构
 tokenConfig:
   ssoUrl: http://127.0.0.1:9990/user/checkToken
   open: false
+testPaperWord:
+  filePath: D:/testPaper/

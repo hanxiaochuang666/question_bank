@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.eblcu.questionbank.persistence.dao.TestResultDetailMapper">
+<mapper namespace="cn.eblcu.questionbank.persistence.dao.ITestResultDetailDao">
   <resultMap id="BaseResultMap" type="cn.eblcu.questionbank.persistence.entity.dto.TestResultDetail">
     <id column="test_result_detail_id" jdbcType="INTEGER" property="testResultDetailId" />
     <result column="test_result_id" jdbcType="INTEGER" property="testResultId" />
@@ -58,8 +58,15 @@
 		<where>
 			<include refid="BaseWhere"/>
 		</where>
-
+		<include refid="cn.eblcu.questionbank.common.orderSqlMap" /> 
+		<include refid="cn.eblcu.questionbank.common.pageSqlMap" /> 
   </select>
+  <delete id="deleteByParams" parameterType="java.util.Map">
+    	delete from test_result_detail
+		<where>
+			<include refid="BaseWhere"/>
+		</where>
+  </delete>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -70,6 +77,14 @@
     delete from test_result_detail
     where test_result_detail_id = #{testResultDetailId,jdbcType=INTEGER}
   </delete>
+  <insert id="insert" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResultDetail">
+    insert into test_result_detail (test_result_detail_id, test_result_id, 
+      question_id, give_answer, score, 
+      comment)
+    values (#{testResultDetailId,jdbcType=INTEGER}, #{testResultId,jdbcType=INTEGER}, 
+      #{questionId,jdbcType=INTEGER}, #{giveAnswer,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
   <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResultDetail">
     insert into test_result_detail
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -132,6 +147,15 @@
         comment = #{comment,jdbcType=VARCHAR},
       </if>
     </set>
+    where test_result_detail_id = #{testResultDetailId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResultDetail">
+    update test_result_detail
+    set test_result_id = #{testResultId,jdbcType=INTEGER},
+      question_id = #{questionId,jdbcType=INTEGER},
+      give_answer = #{giveAnswer,jdbcType=VARCHAR},
+      score = #{score,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=VARCHAR}
     where test_result_detail_id = #{testResultDetailId,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -20,7 +20,7 @@ public class CheckBoxXwptWriteImpl extends SingleChoiceXwptWriteImpl{
         XWPFRun run = paragraph.createRun();
         //加粗
         run.setBold(true);
-        run.setFontSize(6);
+        run.setFontSize(14);
         run.addTab();
         run.addTab();
         /**

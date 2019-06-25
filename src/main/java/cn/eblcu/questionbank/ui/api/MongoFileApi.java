@@ -22,12 +22,11 @@ public class MongoFileApi {
     @Autowired
     private IMongoFileOpt mongoFileOpt;
 
-    // 音频文件上传
+    // 音频文件上传 返回上传到mongdb的filed
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     @ApiOperation(value = "文件上传")
     public BaseModle uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-        mongoFileOpt.uploadFile(file);
-        return BaseModle.getSuccessData();
+        return BaseModle.getSuccessData(mongoFileOpt.uploadFile(file));
     }
 
     // 音频文件下载
