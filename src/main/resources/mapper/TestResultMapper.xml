@@ -46,6 +46,9 @@
 		<if test="!@org.springframework.util.StringUtils@isEmpty(status)">
 			and status=#{status,jdbcType=INTEGER}
 		</if>
+        <if test="!@org.springframework.util.StringUtils@isEmpty(maxStatus)">
+            and status &lt;=#{maxStatus,jdbcType=INTEGER}
+        </if>
 		<if test="!@org.springframework.util.StringUtils@isEmpty(startTime)">
 			and start_time=#{startTime,jdbcType=TIMESTAMP}
 		</if>
@@ -64,6 +67,9 @@
 		<if test="!@org.springframework.util.StringUtils@isEmpty(totalScore)">
 			and total_score=#{totalScore,jdbcType=INTEGER}
 		</if>
+        <if test="!@org.springframework.util.StringUtils@isEmpty(forUpdate)">
+            for update
+        </if>
 
   </sql>
   <select id="selectCount" parameterType="java.util.Map" resultType="java.lang.Long">
@@ -181,6 +187,85 @@
       </if>
     </trim>
   </insert>
+    <insert id="insertNoExists" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResult"
+            useGeneratedKeys="true" keyProperty="testResultId" keyColumn="test_result_id">
+        insert into test_result
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="testResultId != null">
+                test_result_id,
+            </if>
+            <if test="studentId != null">
+                student_id,
+            </if>
+            <if test="studentName != null">
+                student_name,
+            </if>
+            <if test="testPaperId != null">
+                test_paper_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="markingTime != null">
+                marking_time,
+            </if>
+            <if test="objectiveScore != null">
+                objective_score,
+            </if>
+            <if test="subjectiveScore != null">
+                subjective_score,
+            </if>
+            <if test="totalScore != null">
+                total_score,
+            </if>
+        </trim>
+        select
+        <trim  suffixOverrides=",">
+        <if test="testResultId != null">
+            #{testResultId,jdbcType=INTEGER},
+        </if>
+        <if test="studentId != null">
+            #{studentId,jdbcType=INTEGER},
+        </if>
+        <if test="studentName != null">
+            #{studentName,jdbcType=VARCHAR},
+        </if>
+        <if test="testPaperId != null">
+            #{testPaperId,jdbcType=INTEGER},
+        </if>
+        <if test="status != null">
+            #{status,jdbcType=INTEGER},
+        </if>
+        <if test="startTime != null">
+            #{startTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="endTime != null">
+            #{endTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="markingTime != null">
+            #{markingTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="objectiveScore != null">
+            #{objectiveScore,jdbcType=INTEGER},
+        </if>
+        <if test="subjectiveScore != null">
+            #{subjectiveScore,jdbcType=INTEGER},
+        </if>
+        <if test="totalScore != null">
+            #{totalScore,jdbcType=INTEGER},
+        </if>
+        </trim>
+        from dual
+        where not exists ( select 1 from test_result
+        where student_id=#{studentId,jdbcType=INTEGER}
+            and test_paper_id=#{testPaperId,jdbcType=INTEGER})
+    </insert>
   <update id="updateByPrimaryKeySelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.TestResult">
     update test_result
     <set>

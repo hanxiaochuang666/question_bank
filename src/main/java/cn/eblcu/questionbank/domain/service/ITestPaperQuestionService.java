@@ -13,7 +13,7 @@ public interface ITestPaperQuestionService extends IBaseService {
      * @return
      * @throws Exception
      */
-    List<TestPaperQuestionResModel> queryTestPaper(int testPaperId)throws Exception;
+    List<TestPaperQuestionResModel> queryTestPaper(int testPaperId,Integer isNeedAnswer)throws Exception;
 
     /**
      * 保存试卷内容

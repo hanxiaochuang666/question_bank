@@ -68,7 +68,12 @@ public class QuestionServiceImpl extends BaseServiceImpl implements IQuestionSer
             childIds = childQuestionIds.substring(0, childQuestionIds.length() - 1);
             log.info("子题主键id字符串===================" + childIds);
         }
-        insert(model, userId, childIds, false);
+        // 插入主题
+        Integer fatherId = insert(model, userId, childIds, false);
+        if(!StringUtils.isEmpty(childIds)){
+            // 更新子题，设置父题id
+            updateChild(fatherId,childIds);
+        }
     }
 
     private int insert(QuestionModel model, int userId, String childQuestionIds, boolean isChild) throws BusinessException {
@@ -112,6 +117,18 @@ public class QuestionServiceImpl extends BaseServiceImpl implements IQuestionSer
         insertSelective(question);
         log.info("主键id【{}】", question.getQuestionId());
         return question.getQuestionId();
+    }
+
+    private void updateChild(Integer fatherId,String childIds){
+
+        String [] childId = childIds.split(";");
+        for (String s : childId) {
+            Question q = new Question();
+            q.setQuestionId(Integer.parseInt(s));
+            q.setParentQuestionId(fatherId);
+            questionDao.updateByPrimaryKeySelective(q);
+        }
+
     }
 
     @Override
@@ -438,6 +455,7 @@ public class QuestionServiceImpl extends BaseServiceImpl implements IQuestionSer
         switch (questionType) {
             case "duoXuan":
             case "tianKong":
+            case "xuanCi":
                 String[] ans = answer.split(";");
                 if (ans.length > 0) {
                     for (String an : ans) {
@@ -445,15 +463,6 @@ public class QuestionServiceImpl extends BaseServiceImpl implements IQuestionSer
                     }
                 }
                 answerS = answerStr.toString().substring(0, answerStr.length() - 5);
-                break;
-            case "xuanCi":
-                String[] anss = answer.split(";");
-                if (anss.length > 0) {
-                    for (String an : anss) {
-                        answerStr.append(an).append("   ");
-                    }
-                }
-                answerS = answerStr.toString().trim();
                 break;
             default:
                 answerS = answerStr.append(answer).toString();

@@ -52,7 +52,7 @@ public class TestPaperQuestionServiceImpl extends BaseServiceImpl implements ITe
     }
 
     @Override
-    public List<TestPaperQuestionResModel> queryTestPaper(int testPaperId) throws Exception{
+    public List<TestPaperQuestionResModel> queryTestPaper(int testPaperId,Integer isNeedAnswer) throws Exception{
         Map<String, Object> initMap = MapUtils.initMap("testPagerId", testPaperId);
         initMap.put("_sort_line","sort");
         initMap.put("_order_","asc");
@@ -63,14 +63,18 @@ public class TestPaperQuestionServiceImpl extends BaseServiceImpl implements ITe
         int perScore=-1;
         //1.试题信息统一处理
         for (TestPaperQuestion object : objects) {
+            if(null!=isNeedAnswer &&isNeedAnswer>0)
+                object.setResolve(null);
             Map<String, Object> stringObjectMap = MapAndObjectUtils.ObjectToMap(object);
             Question que = questionDao.selectByPrimaryKey(object.getQuestionId());
             if(que!=null) {
                 stringObjectMap.put("questionBody", que.getQuestionBody());
                 stringObjectMap.put("questionSound", que.getQuestionSound());
                 stringObjectMap.put("questionOpt", que.getQuestionOpt());
-                stringObjectMap.put("questionAnswer", que.getQuestionAnswer());
-                stringObjectMap.put("questionResolve", que.getQuestionResolve());
+                if(null!=isNeedAnswer &&isNeedAnswer>0) {
+                    stringObjectMap.put("questionAnswer", que.getQuestionAnswer());
+                    stringObjectMap.put("questionResolve", que.getQuestionResolve());
+                }
                 stringObjectMap.put("questionType", que.getQuestionType());
                 if (lastQuestionType != que.getQuestionType()) {
                     lastQuestionType = que.getQuestionType();
@@ -246,7 +250,7 @@ public class TestPaperQuestionServiceImpl extends BaseServiceImpl implements ITe
         xwptFactory.addDocModel(docModel);
         xwptFactory.addXwptWrite(new HeaderXwptWriteImpl());
         //1.按类型及sort打包数据;LinkHashMap<String,LinkHashSet<Question>>  string 是问题类型code
-        List<TestPaperQuestionResModel> testPaperQuestionResModels = this.queryTestPaper(testPaperId);
+        List<TestPaperQuestionResModel> testPaperQuestionResModels = this.queryTestPaper(testPaperId,1);
         //2.按不同题型分别写入;
         int i=0;
         for (TestPaperQuestionResModel testPaperQuestionResModel : testPaperQuestionResModels) {

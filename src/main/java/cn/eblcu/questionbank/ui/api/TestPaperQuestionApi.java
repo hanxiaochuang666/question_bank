@@ -24,7 +24,7 @@ public class TestPaperQuestionApi {
     @RequestMapping(value = "/list", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "组卷试题列表查询",notes = "组卷试题列表查询",httpMethod = "GET")
     public BaseModle list(@RequestParam int testPaperId)throws Exception{
-        return BaseModle.getSuccessData(testPaperQuestionService.queryTestPaper(testPaperId));
+        return BaseModle.getSuccessData(testPaperQuestionService.queryTestPaper(testPaperId,1));
     }
 
 

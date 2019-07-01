@@ -19,11 +19,12 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_user" jdbcType="INTEGER" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="parent_question_id" jdbcType="INTEGER" property="parentQuestionId" />
   </resultMap>
   <sql id="Base_Column_List">
     question_id, category_one, category_two, course_id, knowledge_points, difficulty_level, 
     question_type, question_body, question_sound, question_opt, question_answer, question_resolve, 
-    org_id, create_user, create_time, update_user, update_time
+    org_id, create_user, create_time, update_user, update_time, parent_question_id
   </sql>
   <sql id="BaseWhere">
     	<if test="!@org.springframework.util.StringUtils@isEmpty(entityKeyValues)">
@@ -89,7 +90,9 @@
 		<if test="!@org.springframework.util.StringUtils@isEmpty(updateTime)">
 			and update_time=#{updateTime,jdbcType=TIMESTAMP}
 		</if>
-
+        <if test="!@org.springframework.util.StringUtils@isEmpty(parentQuestionId)">
+            and parent_question_id=#{parentQuestionId,jdbcType=INTEGER}
+        </if>
   </sql>
   <select id="selectCount" parameterType="java.util.Map" resultType="java.lang.Long">
     	select count(1) from question
@@ -129,13 +132,13 @@
       question_type, question_body, question_sound, 
       question_opt, question_answer, question_resolve, 
       org_id, create_user, create_time, 
-      update_user, update_time)
+      update_user, update_time,parent_question_id)
     values (#{questionId,jdbcType=INTEGER}, #{categoryOne,jdbcType=INTEGER}, #{categoryTwo,jdbcType=INTEGER}, 
       #{courseId,jdbcType=INTEGER}, #{knowledgePoints,jdbcType=VARCHAR}, #{difficultyLevel,jdbcType=INTEGER}, 
       #{questionType,jdbcType=INTEGER}, #{questionBody,jdbcType=VARCHAR}, #{questionSound,jdbcType=VARCHAR}, 
       #{questionOpt,jdbcType=VARCHAR}, #{questionAnswer,jdbcType=VARCHAR}, #{questionResolve,jdbcType=VARCHAR}, 
       #{orgId,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
-      #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP})
+      #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{parentQuestionId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.eblcu.questionbank.persistence.entity.dto.Question"
           useGeneratedKeys="true"  keyProperty="questionId">
@@ -192,6 +195,9 @@
       <if test="updateTime != null">
         update_time,
       </if>
+      <if test="parentQuestionId != null">
+          parent_question_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="questionId != null">
@@ -244,6 +250,9 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentQuestionId != null">
+        #{parentQuestionId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -298,6 +307,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="parentQuestionId != null">
+          parent_question_id = #{parentQuestionId,jdbcType=INTEGER},
+      </if>
     </set>
     where question_id = #{questionId,jdbcType=INTEGER}
   </update>
@@ -318,7 +330,8 @@
       create_user = #{createUser,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      parent_question_id = #{parentQuestionId,jdbcType=INTEGER}
     where question_id = #{questionId,jdbcType=INTEGER}
   </update>
     <select id="queryQuestionTypeCount"  resultType="cn.eblcu.questionbank.ui.model.QuestionTypeCountModel">

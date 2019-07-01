@@ -39,7 +39,7 @@ public class QuestionTypeApi {
 
         QuestionType type = new QuestionType();
         type.setQuestionTypeId(id);
-        type.setStatus((byte) 1);
+        type.setStatus(false);
         typeService.updateByPrimaryKeySelective(type);
         return BaseModle.getSuccessData();
     }

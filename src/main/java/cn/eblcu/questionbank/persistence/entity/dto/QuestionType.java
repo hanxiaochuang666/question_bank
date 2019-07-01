@@ -17,7 +17,7 @@ public class QuestionType {
 	 *TINYINT
 	 *是否是客观题（0:是;1:非）
 	 */
-    private Byte isObjective;
+    private boolean isObjective;
 
     /**
 	 *VARCHAR
@@ -29,7 +29,7 @@ public class QuestionType {
 	 *TINYINT
 	 *状态：0：启用；1：禁用
 	 */
-    private Byte status;
+    private boolean status;
 
     public Integer getQuestionTypeId() {
         return questionTypeId;
@@ -47,11 +47,11 @@ public class QuestionType {
         this.name = name == null ? null : name.trim();
     }
 
-    public Byte getIsObjective() {
+    public boolean getIsObjective() {
         return isObjective;
     }
 
-    public void setIsObjective(Byte isObjective) {
+    public void setIsObjective(boolean isObjective) {
         this.isObjective = isObjective;
     }
 
@@ -63,11 +63,11 @@ public class QuestionType {
         this.code = code == null ? null : code.trim();
     }
 
-    public Byte getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

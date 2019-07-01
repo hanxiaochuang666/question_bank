@@ -93,6 +93,11 @@ public class Question implements Serializable {
 	 */
     private Date updateTime;
 
+    /**
+     * 父题id
+     */
+    private Integer parentQuestionId;
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -116,6 +121,7 @@ public class Question implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateUser=").append(updateUser);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", parentQuestionId=").append(parentQuestionId);
         sb.append("]");
         return sb.toString();
     }
